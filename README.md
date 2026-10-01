@@ -144,6 +144,8 @@ replies in the chosen language. Choose **Auto**, **Local** or **Cloud** in the s
 the agent called (click to see arguments and results), the model, the time taken and the cost in KES.
 In Auto mode, messages with personal data are answered by the local model only.
 
+The default web settings are `APP_HOST=127.0.0.1` and `APP_PORT=8000` in `.env`. Change `APP_PORT` if another service uses that port; `scripts/start_app.ps1` uses the configured value when restarting FastAPI.
+
 Upload PDF, Markdown, TXT or CSV files (max 5 MB) with the paperclip, the sidebar, or by dropping them on the page.
 The agent can then search them. Uploaded knowledge, saved chats, and owner instructions are stored locally under
 `.mela/` (which is git-ignored), and any personal data in document context is redacted before it is sent to a cloud model.

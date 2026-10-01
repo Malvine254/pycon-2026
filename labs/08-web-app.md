@@ -32,6 +32,8 @@ flowchart LR
 
 Open **http://127.0.0.1:8000**.
 
+The host and port come from `APP_HOST` and `APP_PORT` in `.env`. The default is `127.0.0.1:8000`; change `APP_PORT` if that port is already in use, then run `scripts/start_app.ps1` again.
+
 > [!NOTE]
 > The server only listens on `127.0.0.1` (your own laptop). Nobody else on the conference Wi-Fi can reach it.
 

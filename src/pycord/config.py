@@ -18,8 +18,15 @@ def _float(name: str, default: float) -> float:
     return float(value) if value else default
 
 
+def _int(name: str, default: int) -> int:
+    value = os.getenv(name)
+    return int(value) if value else default
+
+
 @dataclass(frozen=True)
 class Settings:
+    app_host: str
+    app_port: int
     foundry_endpoint: str
     foundry_api_key: str
     foundry_deployment: str
@@ -35,6 +42,8 @@ class Settings:
     @classmethod
     def from_env(cls) -> "Settings":
         return cls(
+            app_host=os.getenv("APP_HOST", "127.0.0.1"),
+            app_port=_int("APP_PORT", 8000),
             foundry_endpoint=os.getenv("FOUNDRY_ENDPOINT", "").rstrip("/"),
             foundry_api_key=os.getenv("FOUNDRY_API_KEY", ""),
             foundry_deployment=os.getenv("FOUNDRY_DEPLOYMENT", "gpt-5-mini"),

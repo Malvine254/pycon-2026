@@ -1,6 +1,10 @@
 Set-Location (Split-Path -Parent $PSScriptRoot)
 
-$connections = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue
+$appPort = 8000
+$portSetting = Select-String -Path .env -Pattern '^\s*APP_PORT\s*=\s*(\d+)' -ErrorAction SilentlyContinue
+if ($portSetting) { $appPort = [int]$portSetting.Matches[0].Groups[1].Value }
+
+$connections = Get-NetTCPConnection -LocalPort $appPort -State Listen -ErrorAction SilentlyContinue
 foreach ($connection in $connections) {
     $process = Get-Process -Id $connection.OwningProcess -ErrorAction SilentlyContinue
     if ($process -and $process.ProcessName -match '^python') {
