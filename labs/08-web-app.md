@@ -26,10 +26,8 @@ flowchart LR
 
 ## Step 1 - Start the server
 
-```bash
-foundry server start
-foundry model load phi-3.5-mini
-python app/server.py
+```powershell
+.\scripts\start_app.ps1
 ```
 
 Open **http://127.0.0.1:8000**.

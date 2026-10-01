@@ -127,23 +127,14 @@ All lines should show `[OK]`. If the cloud check fails you can still do modules 
 
 **Mela agent web app** (chat with the tool-calling agent):
 
-```bash
-# In another terminal, make sure Phi is loaded:
-foundry server start
-foundry model load phi-3.5-mini
-python app/server.py
+```powershell
+.\scripts\start_app.ps1
 ```
 
-For a local-only demo, use two terminals:
+For a local-only demo, run this from an activated PowerShell terminal:
 
 ```powershell
-# Terminal 1
-foundry server start
-foundry model load phi-3.5-mini
-
-# Terminal 2
-$env:PYTHONPATH = "src"
-python app/server.py
+.\scripts\start_app.ps1
 ```
 
 Open http://127.0.0.1:8000. The UI is in **Kiswahili by default** - switch with **SW / EN** in the top bar; Mela also
