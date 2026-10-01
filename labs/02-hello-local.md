@@ -1,4 +1,4 @@
-# Lab 02 - Hello, local (Foundry Local / Ollama)
+# Lab 02 - Hello, local with Phi (Foundry Local)
 
 > **Time:** 15 minutes · **Level:** Beginner · **Works offline:** **Yes**
 
@@ -11,7 +11,7 @@ Run the **same prompt** as Lab 01 on a model that lives on your laptop - no inte
 **File:** [`workshop/02_hello_local.py`](../workshop/02_hello_local.py) · **Code to read:** [`src/pycord/providers/local.py`](../src/pycord/providers/local.py)
 
 > [!NOTE]
-> Foundry Local and Ollama both expose an **OpenAI-compatible API** on `localhost`. That means we use the *same* `openai` client as in Lab 01 - only the `base_url` changes.
+> Foundry Local exposes an **OpenAI-compatible API** on `localhost`. That means we use the *same* `openai` client as in Lab 01 - only the `base_url` changes.
 
 ---
 
@@ -25,10 +25,10 @@ Use this on Windows or macOS:
 foundry server status
 foundry model list
 foundry model download phi-3.5-mini
-foundry run phi-3.5-mini
+foundry model load phi-3.5-mini
 ```
 
-Keep the model session open while you complete this lab. Type `/exit` when you are finished.
+Keep the Foundry Local server running while you complete this lab.
 
 In `.env`:
 

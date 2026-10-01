@@ -33,7 +33,7 @@ classDiagram
 
 Open [`base.py`](../src/pycord/providers/base.py). Notice:
 
-- `client` is **lazy** - it is only created on first use (Foundry Local starts its service only when needed).
+- `client` is **lazy** - it is only created on first use. Start Foundry Local and load Phi before running the local cells.
 - `chat()` measures latency, reads token usage and computes cost - **once**, for every provider.
 - Subclasses only implement `_build_client()` and `is_available()`.
 

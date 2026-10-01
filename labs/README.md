@@ -26,7 +26,7 @@ flowchart LR
 |---|---|---|---|---|
 | [00](00-setup.md) | Setup and environment check | 20 min | Partly | A working Python environment, `.env`, models ready |
 | [01](01-hello-cloud.md) | Hello, cloud | 15 min | No | Your first call to a Microsoft Foundry model |
-| [02](02-hello-local.md) | Hello, local | 15 min | **Yes** | The same call, running on your laptop |
+| [02](02-hello-local.md) | Hello, local with Phi | 15 min | **Yes** | The same call, running on Foundry Local |
 | [03](03-unified-client.md) | One interface, many models | 15 min | Partly | A `Provider` abstraction + your own provider |
 | | Break | 10 min | | |
 | [04](04-hybrid-router.md) | The hybrid router | 25 min | Partly | Rules that pick local vs cloud, with fallback |
