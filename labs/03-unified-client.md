@@ -81,7 +81,14 @@ Each provider returns the same `ChatResult`, including the answer, model name, l
 
 ## Exercises
 
-**Optional:** Implement a provider for another OpenAI-compatible local server.
+**Optional:** Implement a provider for another OpenAI-compatible server. Set its values before using it:
+
+```powershell
+$env:MY_PROVIDER_BASE_URL = "http://localhost:1234/v1"
+$env:MY_PROVIDER_API_KEY = "not-needed"
+```
+
+The endpoint is environment-controlled; the exercise does not require LM Studio or any specific local server.
 
 <details>
 <summary>Solution</summary>
