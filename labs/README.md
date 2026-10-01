@@ -14,7 +14,7 @@ Welcome! In these labs you will build **Mela**, a bilingual (Kiswahili / English
 flowchart LR
     U([You]) --> W[Mela web app]
     W --> R{Hybrid router}
-    R -- personal data / offline / simple --> L[Local model<br/>Foundry Local or Ollama]
+    R -- personal data / offline / simple --> L[Local Phi model<br/>Foundry Local]
     R -- complex / tools --> C[Microsoft Foundry<br/>gpt-5-mini]
     D[(Your documents)] -. search .-> L
     D -. search, redacted .-> C

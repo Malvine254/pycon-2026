@@ -11,7 +11,7 @@ You will build **Mela**, a bilingual (Kiswahili / English) assistant that uses *
 ```mermaid
 flowchart LR
     U[User prompt] --> P{Personal data?}
-    P -- yes --> L[Local model<br/>Foundry Local / Ollama]
+    P -- yes --> L[Local Phi model<br/>Foundry Local]
     P -- no --> N{Cloud reachable?}
     N -- no --> L
     N -- yes --> C{Complex task?}
@@ -27,7 +27,7 @@ flowchart LR
 |---|---|---|---|
 | 0:00 | Welcome and setup check | [Lab 00](labs/00-setup.md) | [workshop/00_setup_check.py](workshop/00_setup_check.py) |
 | 0:20 | Hello, cloud (Microsoft Foundry) | [Lab 01](labs/01-hello-cloud.md) | [workshop/01_hello_cloud.py](workshop/01_hello_cloud.py) |
-| 0:35 | Hello, local (Foundry Local / Ollama) | [Lab 02](labs/02-hello-local.md) | [workshop/02_hello_local.py](workshop/02_hello_local.py) |
+| 0:35 | Hello, local with Phi (Foundry Local) | [Lab 02](labs/02-hello-local.md) | [workshop/02_hello_local.py](workshop/02_hello_local.py) |
 | 0:50 | One interface for every model | [Lab 03](labs/03-unified-client.md) | [workshop/03_unified_client.py](workshop/03_unified_client.py) |
 | 1:05 | Break | | |
 | 1:15 | Hybrid router (offline fallback, cost, complexity) | [Lab 04](labs/04-hybrid-router.md) | [workshop/04_hybrid_router.py](workshop/04_hybrid_router.py) |
