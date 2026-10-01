@@ -1,4 +1,4 @@
-"""Msaidizi web app for the agent. Run with: python app/server.py"""
+"""Mela web app for the agent. Run with: python app/server.py"""
 import threading
 from collections import Counter
 from dataclasses import asdict
@@ -32,8 +32,21 @@ uploads: dict[str, dict] = {}
 uploads_lock = threading.Lock()
 agents = {"local": Agent(local, retriever), "cloud": Agent(cloud, retriever)}
 
-app = FastAPI(title="Msaidizi")
+app = FastAPI(title="Mela")
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+ROUTE_REASONS = {
+    "manual_local": "local model selected",
+    "manual_cloud": "cloud model selected",
+    "pii": "personal data detected - kept on this device",
+    "offline": "cloud unreachable - working offline",
+    "cloud_tools": "cloud model has the best tool support",
+}
+
+
+def api_error(status: int, code: str, message: str) -> HTTPException:
+    # The UI translates `code`; `message` is the English fallback.
+    return HTTPException(status, {"code": code, "message": message})
 
 
 class Turn(BaseModel):
@@ -46,18 +59,19 @@ class ChatRequest(BaseModel):
     history: list[Turn] = Field(default_factory=list, max_length=20)
     mode: Literal["auto", "local", "cloud"] = "auto"
     attachments: list[Annotated[str, Field(max_length=120)]] = Field(default_factory=list, max_length=10)
+    language: Literal["sw", "en"] | None = None
 
 
 def choose_target(mode: str, user_text: str) -> tuple[str, str]:
     if mode != "auto":
-        return mode, f"{mode} model selected"
+        return mode, f"manual_{mode}"
     if contains_pii(user_text):
         if not local.is_available():
-            raise HTTPException(422, "Personal data detected and no local model is available - not sending it to the cloud.")
-        return "local", "personal data detected - kept on this device"
+            raise api_error(422, "pii_no_local", "Personal data detected and no local model is available - not sending it to the cloud.")
+        return "local", "pii"
     if not cloud.is_available():
-        return "local", "cloud unreachable - working offline"
-    return "cloud", "cloud model has the best tool support"
+        return "local", "offline"
+    return "cloud", "cloud_tools"
 
 
 @app.get("/")
@@ -90,14 +104,14 @@ def upload_document(file: UploadFile) -> dict:
     try:
         text = extract_text(name, data)
     except DocumentError as exc:
-        raise HTTPException(400, str(exc)) from exc
+        raise api_error(400, exc.code, str(exc)) from exc
 
     source = f"upload/{name}"
     chunks = chunk_text(source, text)
     with uploads_lock:
         replaced = [doc_id for doc_id, doc in uploads.items() if doc["name"] == name]
         if not replaced and len(uploads) >= MAX_UPLOADS:
-            raise HTTPException(400, f"Limit of {MAX_UPLOADS} uploaded documents reached. Remove one first.")
+            raise api_error(400, "upload_limit", f"Limit of {MAX_UPLOADS} uploaded documents reached. Remove one first.")
         for doc_id in replaced:
             del uploads[doc_id]
         retriever.remove_source(source)
@@ -119,7 +133,7 @@ def delete_document(doc_id: str) -> dict:
     with uploads_lock:
         doc = uploads.pop(doc_id, None)
         if doc is None:
-            raise HTTPException(404, "Document not found.")
+            raise api_error(404, "not_found", "Document not found.")
         retriever.remove_source(doc["source"])
     return {"deleted": doc_id}
 
@@ -128,14 +142,14 @@ def delete_document(doc_id: str) -> dict:
 def chat(req: ChatRequest) -> dict:
     history = [turn.model_dump() for turn in req.history]
     user_text = "\n".join([*(t["content"] for t in history if t["role"] == "user"), req.message])
-    target, reason = choose_target(req.mode, user_text)
+    target, route_code = choose_target(req.mode, user_text)
     message = req.message
     if req.attachments:
         message += f"\n\n(Attached files: {', '.join(req.attachments)} - use search_docs to read them.)"
     try:
-        reply = agents[target].respond(message, history=history)
+        reply = agents[target].respond(message, history=history, language=req.language)
     except Exception as exc:
-        raise HTTPException(502, f"{type(exc).__name__}: {exc}") from exc
+        raise api_error(502, "model_error", f"{type(exc).__name__}: {exc}") from exc
     return {
         "reply": reply.text,
         "tools": [asdict(call) for call in reply.tool_calls],
@@ -143,7 +157,8 @@ def chat(req: ChatRequest) -> dict:
         "model": reply.model,
         "latency_s": round(reply.latency_s, 2),
         "cost_kes": round(reply.cost_kes, 4),
-        "route_reason": reason,
+        "route_code": route_code,
+        "route_reason": ROUTE_REASONS[route_code],
     }
 
 

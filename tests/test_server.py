@@ -13,9 +13,11 @@ class FakeAgent:
     def __init__(self, name):
         self.name = name
         self.calls = []
+        self.languages = []
 
-    def respond(self, question, history=None):
+    def respond(self, question, history=None, language=None):
         self.calls.append((question, history))
+        self.languages.append(language)
         return AgentReply(
             text=f"answer from {self.name}",
             provider=self.name,
@@ -39,7 +41,7 @@ def server(monkeypatch):
 def test_index_served(server):
     response = TestClient(server.app).get("/")
     assert response.status_code == 200
-    assert "Msaidizi" in response.text
+    assert "Mela" in response.text
 
 
 def test_auto_uses_cloud_and_returns_tools(server):
@@ -58,7 +60,16 @@ def test_pii_without_local_is_refused(server, monkeypatch):
     monkeypatch.setattr(server.local, "is_available", lambda: False)
     response = TestClient(server.app).post("/api/chat", json={"message": "Call 0712345678"})
     assert response.status_code == 422
+    assert response.json()["detail"]["code"] == "pii_no_local"
     assert server.agents["cloud"].calls == []
+
+
+def test_language_and_route_code(server):
+    client = TestClient(server.app)
+    data = client.post("/api/chat", json={"message": "Habari", "language": "sw"}).json()
+    assert data["route_code"] == "cloud_tools"
+    assert server.agents["cloud"].languages == ["sw"]
+    assert client.post("/api/chat", json={"message": "hi", "language": "fr"}).status_code == 422
 
 
 def test_rejects_invalid_input(server):
@@ -71,6 +82,7 @@ def test_rejects_invalid_input(server):
 def test_static_assets_served(server):
     client = TestClient(server.app)
     assert client.get("/static/app.js").status_code == 200
+    assert client.get("/static/i18n.js").status_code == 200
     assert client.get("/static/styles.css").status_code == 200
 
 
@@ -100,7 +112,7 @@ def test_reupload_replaces_document(server):
 
 def test_upload_rejects_bad_files(server):
     client = TestClient(server.app)
-    assert client.post("/api/documents", files={"file": ("x.exe", b"MZ", "application/octet-stream")}).status_code == 400
+    assert client.post("/api/documents", files={"file": ("x.exe", b"MZ", "application/octet-stream")}).json()["detail"]["code"] == "unsupported_type"
     big = b"a" * (5 * 1024 * 1024 + 1)
     assert client.post("/api/documents", files={"file": ("big.txt", big, "text/plain")}).status_code == 400
 

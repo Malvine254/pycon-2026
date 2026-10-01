@@ -1,4 +1,4 @@
-"""Msaidizi chat UI. Run with: streamlit run app/streamlit_app.py"""
+"""Mela chat UI. Run with: streamlit run app/streamlit_app.py"""
 import streamlit as st
 
 from pycord.config import DOCS_DIR, Settings
@@ -7,7 +7,7 @@ from pycord.providers import get_cloud_provider, get_local_provider
 from pycord.rag import BM25Retriever, build_rag_messages, load_documents
 from pycord.router import HybridRouter
 
-st.set_page_config(page_title="Msaidizi - Pycord")
+st.set_page_config(page_title="Mela - Pycord")
 
 
 @st.cache_resource
@@ -20,7 +20,7 @@ def load_stack():
 
 local, cloud, router, retriever = load_stack()
 
-st.title("Msaidizi")
+st.title("Mela")
 st.caption("Pycord - hybrid AI with Microsoft Foundry and local models - PyCon Kenya 2026")
 
 with st.sidebar:

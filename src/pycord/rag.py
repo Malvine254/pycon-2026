@@ -10,7 +10,7 @@ from pathlib import Path
 TOKEN_RE = re.compile(r"\w+", re.UNICODE)
 
 RAG_SYSTEM_PROMPT = (
-    "You are Msaidizi, a helpful assistant for Kenyan users. "
+    "You are Mela, a helpful assistant for Kenyan users. "
     "Answer ONLY using the context below. If the answer is not in the context, say you don't know. "
     "Cite sources like [1]. Reply in the same language as the question (English or Swahili)."
 )

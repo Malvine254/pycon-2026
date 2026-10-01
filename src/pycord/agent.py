@@ -34,11 +34,16 @@ EAT = timezone(timedelta(hours=3), "EAT")
 KES_RATES = {"KES": 1.0, "USD": 129.0, "EUR": 150.0, "UGX": 0.035, "TZS": 0.05}
 
 AGENT_SYSTEM_PROMPT = (
-    "You are Msaidizi, a helpful assistant for people in Kenya. "
+    "You are Mela, a helpful assistant for people in Kenya. "
     "Use the available tools when they help. Use search_docs for questions about the knowledge base "
     "or files the user uploaded, and cite the source file names. "
     "Be concise. Reply in the user's language (English or Swahili)."
 )
+
+LANGUAGE_INSTRUCTIONS = {
+    "sw": "Always reply in Kiswahili, even if the user writes in English.",
+    "en": "Always reply in English, even if the user writes in Swahili.",
+}
 
 TOOLS: list[dict[str, Any]] = [
     {
@@ -128,9 +133,14 @@ class Agent:
                 print(f"  -> tool {call.name}({call.arguments})")
         return reply.text
 
-    def respond(self, question: str, history: list[dict[str, str]] | None = None) -> AgentReply:
+    def respond(
+        self, question: str, history: list[dict[str, str]] | None = None, language: str | None = None
+    ) -> AgentReply:
+        system = AGENT_SYSTEM_PROMPT
+        if language in LANGUAGE_INSTRUCTIONS:
+            system = f"{system} {LANGUAGE_INSTRUCTIONS[language]}"
         messages: list[dict[str, Any]] = [
-            {"role": "system", "content": AGENT_SYSTEM_PROMPT},
+            {"role": "system", "content": system},
             *(history or []),
             {"role": "user", "content": question},
         ]

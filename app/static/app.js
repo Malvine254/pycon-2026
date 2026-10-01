@@ -2,11 +2,6 @@
 
 const ALLOWED_TYPES = [".pdf", ".md", ".txt", ".csv"];
 const MAX_BYTES = 5 * 1024 * 1024;
-const MODE_HINTS = {
-  auto: "Personal data stays on your device. Everything else uses the cloud agent.",
-  local: "Everything runs on this laptop - works offline and costs nothing.",
-  cloud: "Uses Microsoft Foundry. Personal data from documents is redacted first.",
-};
 
 const SVG = (paths) =>
   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
@@ -15,6 +10,7 @@ const ICONS = {
   file: SVG('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>'),
   x: SVG('<path d="M18 6 6 18M6 6l12 12"/>'),
   copy: SVG('<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>'),
+  check: SVG('<path d="M20 6 9 17l-5-5"/>'),
   tool: SVG('<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>'),
   trash: SVG('<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>'),
   paperclip: SVG('<path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>'),
@@ -29,11 +25,48 @@ const ICONS = {
   shield: SVG('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'),
 };
 
-const state = { history: [], mode: "auto", busy: false, pending: [], docs: [] };
+const state = {
+  history: [],
+  mode: "auto",
+  lang: localStorage.getItem("lang") === "en" ? "en" : "sw",
+  busy: false,
+  pending: [],
+  docs: [],
+  status: null,
+};
 const $ = (sel) => document.querySelector(sel);
 const thread = $("#thread");
 const input = $("#input");
 const heroTemplate = $("#hero").cloneNode(true);
+
+/* ---------- i18n ---------- */
+const lookup = (lang, key) => key.split(".").reduce((obj, part) => obj?.[part], I18N[lang]);
+
+function t(key, vars = {}) {
+  const value = lookup(state.lang, key) ?? lookup("en", key) ?? key;
+  if (typeof value === "function") return value(vars);
+  return value.replace(/\{(\w+)\}/g, (_, name) => vars[name] ?? "");
+}
+
+function applyI18n(root = document) {
+  root.querySelectorAll("[data-i18n]").forEach((el) => (el.textContent = t(el.dataset.i18n)));
+  root.querySelectorAll("[data-i18n-placeholder]").forEach((el) => (el.placeholder = t(el.dataset.i18nPlaceholder)));
+  root.querySelectorAll("[data-i18n-title]").forEach((el) => {
+    el.title = t(el.dataset.i18nTitle);
+    el.setAttribute("aria-label", el.title);
+  });
+}
+
+function setLang(lang) {
+  state.lang = lang;
+  localStorage.setItem("lang", lang);
+  document.documentElement.lang = lang;
+  document.querySelectorAll("#lang button").forEach((b) => b.classList.toggle("active", b.dataset.lang === lang));
+  applyI18n();
+  setMode(state.mode);
+  renderDocs();
+  renderStatus();
+}
 
 // `html` is only ever given trusted icon markup or escaped markdown.
 function h(tag, props = {}, ...children) {
@@ -103,7 +136,8 @@ function renderMarkdown(src) {
     if (i + 2 < parts.length) {
       html +=
         `<div class="codeblock"><div class="codeblock-head"><span>${parts[i + 1] || "code"}</span>` +
-        `<button type="button" class="copy-code">Copy</button></div><pre><code>${parts[i + 2]}</code></pre></div>`;
+        `<button type="button" class="copy-code">${escapeHtml(t("copy"))}</button></div>` +
+        `<pre><code>${parts[i + 2]}</code></pre></div>`;
     }
   }
   return html;
@@ -123,20 +157,29 @@ async function copyText(text, button) {
   try {
     await navigator.clipboard.writeText(text);
     if (button.classList.contains("copy-code")) {
-      button.textContent = "Copied";
-      setTimeout(() => (button.textContent = "Copy"), 1200);
+      button.textContent = t("copied");
+      setTimeout(() => (button.textContent = t("copy")), 1200);
     } else {
       button.classList.add("done");
-      button.innerHTML = SVG('<path d="M20 6 9 17l-5-5"/>');
+      button.innerHTML = ICONS.check;
       setTimeout(() => { button.classList.remove("done"); button.innerHTML = ICONS.copy; }, 1200);
     }
   } catch {
-    toast("Could not copy to clipboard", "error");
+    toast(t("toast.copyFailed"), "error");
   }
 }
 
+function errorText(data) {
+  const detail = data?.detail;
+  if (detail && typeof detail === "object" && !Array.isArray(detail)) {
+    const translated = lookup(state.lang, `errors.${detail.code}`);
+    if (detail.code === "model_error") return `${translated} ${detail.message}`;
+    return translated || detail.message;
+  }
+  return typeof detail === "string" ? detail : t("errors.generic");
+}
+
 const scrollToBottom = () => $("#scroller").scrollTo({ top: $("#scroller").scrollHeight, behavior: "smooth" });
-const errorText = (data) => (typeof data.detail === "string" ? data.detail : "Something went wrong. Please try again.");
 const pretty = (s) => { try { return JSON.stringify(JSON.parse(s), null, 2); } catch { return s; } };
 const fileChip = (name) => h("span", { class: "chip", html: ICONS.file }, h("span", { class: "chip-name", title: name }, name));
 const avatar = () => h("div", { class: "avatar" }, "M");
@@ -157,7 +200,7 @@ function addThinking() {
   const el = h("div", { class: "msg assistant" }, avatar(),
     h("div", { class: "msg-body" },
       h("div", { class: "thinking" },
-        h("span", { class: "shimmer" }, "Thinking"),
+        h("span", { class: "shimmer" }, t("thinking")),
         h("span", { class: "dots", html: "<i></i><i></i><i></i>" }))));
   thread.append(el);
   scrollToBottom();
@@ -166,21 +209,22 @@ function addThinking() {
 
 function renderStep(call) {
   return h("details", { class: "step" },
-    h("summary", {}, h("span", { class: "step-icon", html: ICONS.tool }), "Used ", h("strong", {}, call.name)),
+    h("summary", {}, h("span", { class: "step-icon", html: ICONS.tool }), `${t("used")} `, h("strong", {}, call.name)),
     h("div", { class: "step-body" },
-      h("div", { class: "step-label" }, "Input"), h("pre", {}, pretty(call.arguments)),
-      h("div", { class: "step-label" }, "Result"), h("pre", {}, pretty(call.result))));
+      h("div", { class: "step-label" }, t("input")), h("pre", {}, pretty(call.arguments)),
+      h("div", { class: "step-label" }, t("result")), h("pre", {}, pretty(call.result))));
 }
 
 function renderFooter(data) {
   const isLocal = data.provider !== "foundry";
+  const reason = lookup(state.lang, `reasons.${data.route_code}`) || data.route_reason;
   return h("div", { class: "msg-footer" },
-    h("span", { class: `badge ${isLocal ? "local" : "cloud"}` }, isLocal ? "Local" : "Cloud"),
+    h("span", { class: `badge ${isLocal ? "local" : "cloud"}` }, t(isLocal ? "badge.local" : "badge.cloud")),
     h("span", {}, data.model), "·", h("span", {}, `${data.latency_s}s`), "·",
-    h("span", {}, isLocal ? "free" : `KES ${data.cost_kes.toFixed(4)}`),
-    h("span", { class: "reason", title: data.route_reason }, data.route_reason),
+    h("span", {}, isLocal ? t("free") : `KES ${data.cost_kes.toFixed(4)}`),
+    h("span", { class: "reason", title: reason }, reason),
     h("button", {
-      class: "icon-btn sm", type: "button", title: "Copy answer", "aria-label": "Copy answer",
+      class: "icon-btn sm", type: "button", title: t("copyAnswer"), "aria-label": t("copyAnswer"),
       html: ICONS.copy, onclick: (e) => copyText(data.reply, e.currentTarget),
     }));
 }
@@ -211,7 +255,7 @@ async function send(text) {
   text = text.trim();
   if (state.busy || !text) return;
   if (state.pending.some((p) => p.status === "uploading")) {
-    toast("Please wait for the upload to finish", "info");
+    toast(t("toast.waitUpload"), "info");
     return;
   }
   const attachments = state.pending.filter((p) => p.status === "ready").map((p) => p.name);
@@ -226,7 +270,13 @@ async function send(text) {
     const res = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text, history: state.history.slice(-20), mode: state.mode, attachments }),
+      body: JSON.stringify({
+        message: text,
+        history: state.history.slice(-20),
+        mode: state.mode,
+        attachments,
+        language: state.lang,
+      }),
     });
     const data = await res.json().catch(() => ({}));
     thinking.remove();
@@ -238,7 +288,7 @@ async function send(text) {
     state.history.push({ role: "user", content: text }, { role: "assistant", content: data.reply.slice(0, 8000) });
   } catch {
     thinking.remove();
-    addError("Could not reach the server. Is it running?");
+    addError(t("errors.network"));
   } finally {
     setBusy(false);
     input.focus();
@@ -250,6 +300,7 @@ function newChat() {
   state.pending = [];
   renderPending();
   const hero = heroTemplate.cloneNode(true);
+  applyI18n(hero);
   thread.replaceChildren(hero);
   closeSidebar();
   input.focus();
@@ -263,7 +314,7 @@ function renderPending() {
       h("span", { class: "chip", html: item.status === "uploading" ? '<span class="spinner"></span>' : ICONS.file },
         h("span", { class: "chip-name", title: item.name }, item.name),
         h("button", {
-          class: "chip-x", type: "button", "aria-label": `Remove ${item.name}`, html: ICONS.x,
+          class: "chip-x", type: "button", "aria-label": `${t("remove")} ${item.name}`, html: ICONS.x,
           onclick: () => { state.pending = state.pending.filter((p) => p !== item); renderPending(); },
         })))
   );
@@ -273,8 +324,8 @@ function renderPending() {
 async function uploadFiles(files, attach) {
   for (const file of files) {
     const ext = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
-    if (!ALLOWED_TYPES.includes(ext)) { toast(`${file.name}: only PDF, MD, TXT and CSV are supported`, "error"); continue; }
-    if (file.size > MAX_BYTES) { toast(`${file.name}: larger than 5 MB`, "error"); continue; }
+    if (!ALLOWED_TYPES.includes(ext)) { toast(t("toast.unsupported", { name: file.name }), "error"); continue; }
+    if (file.size > MAX_BYTES) { toast(t("toast.tooBig", { name: file.name }), "error"); continue; }
 
     const item = { name: file.name, status: "uploading" };
     if (attach) { state.pending.push(item); renderPending(); }
@@ -286,8 +337,8 @@ async function uploadFiles(files, attach) {
       if (!res.ok) throw new Error(errorText(data));
       item.name = data.name;
       item.status = "ready";
-      const note = data.pii ? " - personal data will be redacted for the cloud" : "";
-      toast(`Added ${data.name} (${data.chunks} chunk${data.chunks === 1 ? "" : "s"})${note}`, "success");
+      const message = t("toast.added", { name: data.name, chunks: t("chunks", { n: data.chunks }) });
+      toast(message + (data.pii ? t("toast.piiNote") : ""), "success");
       loadDocs();
     } catch (err) {
       state.pending = state.pending.filter((p) => p !== item);
@@ -303,6 +354,10 @@ async function loadDocs() {
   } catch {
     return;
   }
+  renderDocs();
+}
+
+function renderDocs() {
   $("#doc-count").textContent = state.docs.length;
   $("#doc-list").replaceChildren(
     ...state.docs.map((doc) =>
@@ -311,11 +366,11 @@ async function loadDocs() {
         h("div", { class: "doc-info" },
           h("div", { class: "doc-name", title: doc.name }, doc.name),
           h("div", { class: "doc-meta" },
-            `${doc.chunks} chunk${doc.chunks === 1 ? "" : "s"}`,
-            doc.builtin ? h("span", { class: "tag" }, "sample") : null,
-            doc.pii ? h("span", { class: "tag warn", title: "Personal data is redacted before it reaches the cloud" }, "PII") : null)),
+            t("chunks", { n: doc.chunks }),
+            doc.builtin ? h("span", { class: "tag" }, t("sample")) : null,
+            doc.pii ? h("span", { class: "tag warn", title: t("piiTitle") }, "PII") : null)),
         doc.builtin ? null : h("button", {
-          class: "icon-btn sm", type: "button", title: "Remove", "aria-label": `Remove ${doc.name}`,
+          class: "icon-btn sm", type: "button", title: t("remove"), "aria-label": `${t("remove")} ${doc.name}`,
           html: ICONS.trash, onclick: () => removeDoc(doc),
         })))
   );
@@ -323,40 +378,45 @@ async function loadDocs() {
 
 async function removeDoc(doc) {
   const res = await fetch(`/api/documents/${encodeURIComponent(doc.id)}`, { method: "DELETE" });
-  if (res.ok) { toast(`Removed ${doc.name}`, "info"); loadDocs(); }
-  else toast("Could not remove the document", "error");
+  if (res.ok) { toast(t("toast.removed", { name: doc.name }), "info"); loadDocs(); }
+  else toast(t("toast.removeFailed"), "error");
 }
 
 /* ---------- Status, mode, theme ---------- */
-function setModel(key, info) {
-  const card = $(`#${key}-card`);
-  card.classList.toggle("on", info.available);
-  card.classList.toggle("off", !info.available);
-  $(`#${key}-name`).textContent = info.model;
-  $(`#${key}-sub`).textContent =
-    key === "local"
-      ? `${info.name} · ${info.available ? "ready" : "not found"}`
-      : `Microsoft Foundry · ${info.available ? "online" : "offline"}`;
-}
-
 async function refreshStatus() {
   try {
-    const status = await (await fetch("/api/status")).json();
-    setModel("local", status.local);
-    setModel("cloud", status.cloud);
+    state.status = await (await fetch("/api/status")).json();
   } catch {
-    for (const key of ["local", "cloud"]) {
-      $(`#${key}-card`).className = "model-card off";
-      $(`#${key}-sub`).textContent = "server unreachable";
+    state.status = "unreachable";
+  }
+  renderStatus();
+}
+
+function renderStatus() {
+  if (!state.status) return;
+  for (const key of ["local", "cloud"]) {
+    const card = $(`#${key}-card`);
+    const sub = $(`#${key}-sub`);
+    if (state.status === "unreachable") {
+      card.className = "model-card off";
+      sub.textContent = t("status.unreachable");
+      continue;
     }
+    const info = state.status[key];
+    card.className = `model-card ${info.available ? "on" : "off"}`;
+    $(`#${key}-name`).textContent = info.model;
+    sub.textContent =
+      key === "local"
+        ? `${info.name} · ${t(info.available ? "status.ready" : "status.notFound")}`
+        : `Microsoft Foundry · ${t(info.available ? "status.online" : "status.offline")}`;
   }
 }
 
 function setMode(mode) {
   state.mode = mode;
   document.querySelectorAll("#mode button").forEach((b) => b.classList.toggle("active", b.dataset.mode === mode));
-  $("#mode-hint").textContent = MODE_HINTS[mode];
-  $("#mode-pill").textContent = mode[0].toUpperCase() + mode.slice(1);
+  $("#mode-hint").textContent = t(`modeHints.${mode}`);
+  $("#mode-pill").textContent = t(`modes.${mode}`);
 }
 
 function applyTheme(theme) {
@@ -380,13 +440,14 @@ input.addEventListener("keydown", (e) => {
 });
 thread.addEventListener("click", (e) => {
   const card = e.target.closest(".card");
-  if (card) send(card.dataset.prompt);
+  if (card) send(t(`cards.${card.dataset.card}.prompt`));
 });
 document.addEventListener("click", (e) => {
   const button = e.target.closest(".copy-code");
   if (button) copyText(button.closest(".codeblock").querySelector("code").textContent, button);
 });
 document.querySelectorAll("#mode button").forEach((b) => b.addEventListener("click", () => setMode(b.dataset.mode)));
+document.querySelectorAll("#lang button").forEach((b) => b.addEventListener("click", () => setLang(b.dataset.lang)));
 $("#new-chat").addEventListener("click", newChat);
 $("#theme-toggle").addEventListener("click", () =>
   applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
@@ -415,7 +476,7 @@ window.addEventListener("drop", (e) => {
 fillIcons();
 fillIcons(heroTemplate);
 applyTheme(document.documentElement.dataset.theme);
-setMode("auto");
+setLang(state.lang);
 refreshStatus();
 loadDocs();
 setInterval(refreshStatus, 30000);

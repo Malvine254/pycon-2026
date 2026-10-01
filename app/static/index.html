@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="sw">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Msaidizi · Pycord</title>
+  <title>Mela · Pycord</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%230b6e4f'/><text x='16' y='22' font-size='16' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='700'>M</text></svg>" />
   <link rel="stylesheet" href="/static/styles.css" />
   <script>
@@ -17,57 +17,61 @@
       <div class="brand">
         <div class="logo">M</div>
         <div>
-          <div class="brand-name">Msaidizi</div>
+          <div class="brand-name">Mela</div>
           <div class="brand-sub">Pycord · PyCon Kenya 2026</div>
         </div>
       </div>
 
-      <button class="btn-new" id="new-chat" type="button"><span data-icon="plus"></span>New chat</button>
+      <button class="btn-new" id="new-chat" type="button"><span data-icon="plus"></span><span data-i18n="newChat"></span></button>
 
       <section class="section">
-        <div class="section-title">Routing</div>
-        <div class="segmented" id="mode" role="group" aria-label="Model routing">
-          <button type="button" data-mode="auto" class="active">Auto</button>
-          <button type="button" data-mode="local">Local</button>
-          <button type="button" data-mode="cloud">Cloud</button>
+        <div class="section-title" data-i18n="routing"></div>
+        <div class="segmented" id="mode" role="group">
+          <button type="button" data-mode="auto" data-i18n="modes.auto"></button>
+          <button type="button" data-mode="local" data-i18n="modes.local"></button>
+          <button type="button" data-mode="cloud" data-i18n="modes.cloud"></button>
         </div>
         <p class="section-hint" id="mode-hint"></p>
       </section>
 
       <section class="section">
-        <div class="section-title">Models</div>
+        <div class="section-title" data-i18n="models"></div>
         <div class="model-card" id="local-card">
           <span class="dot"></span>
-          <div><div class="model-name" id="local-name">Local model</div><div class="model-sub" id="local-sub">Checking...</div></div>
+          <div><div class="model-name" id="local-name" data-i18n="localModel"></div><div class="model-sub" id="local-sub" data-i18n="checking"></div></div>
         </div>
         <div class="model-card" id="cloud-card">
           <span class="dot"></span>
-          <div><div class="model-name" id="cloud-name">Cloud model</div><div class="model-sub" id="cloud-sub">Checking...</div></div>
+          <div><div class="model-name" id="cloud-name" data-i18n="cloudModel"></div><div class="model-sub" id="cloud-sub" data-i18n="checking"></div></div>
         </div>
       </section>
 
       <section class="section grow">
-        <div class="section-title">Knowledge <span class="count" id="doc-count">0</span></div>
+        <div class="section-title"><span data-i18n="knowledge"></span> <span class="count" id="doc-count">0</span></div>
         <label class="dropzone">
           <input type="file" id="file-input" multiple accept=".pdf,.md,.txt,.csv" hidden />
           <span data-icon="upload"></span>
-          <span><strong>Upload files</strong><br /><small>PDF, MD, TXT, CSV · max 5 MB</small></span>
+          <span><strong data-i18n="upload"></strong><br /><small data-i18n="uploadHint"></small></span>
         </label>
         <ul class="doc-list" id="doc-list"></ul>
       </section>
 
       <div class="sidebar-footer">
-        <button class="icon-btn" id="theme-toggle" type="button" title="Toggle theme" aria-label="Toggle theme"></button>
-        <span>Microsoft Foundry + local models</span>
+        <button class="icon-btn" id="theme-toggle" type="button" data-i18n-title="theme"></button>
+        <span data-i18n="footer"></span>
       </div>
     </aside>
     <div class="backdrop" id="backdrop"></div>
 
     <main class="main">
       <header class="topbar">
-        <button class="icon-btn menu" id="menu-btn" type="button" aria-label="Open menu"><span data-icon="menu"></span></button>
-        <div class="topbar-title">Hybrid AI assistant</div>
-        <span class="mode-pill" id="mode-pill">Auto</span>
+        <button class="icon-btn menu" id="menu-btn" type="button" data-i18n-title="menu"><span data-icon="menu"></span></button>
+        <div class="topbar-title" data-i18n="topbar"></div>
+        <span class="mode-pill" id="mode-pill"></span>
+        <div class="lang-switch" id="lang" role="group" data-i18n-title="language">
+          <button type="button" data-lang="sw">SW</button>
+          <button type="button" data-lang="en">EN</button>
+        </div>
         <div class="flag" aria-hidden="true"><span></span><span></span><span></span></div>
       </header>
 
@@ -75,28 +79,28 @@
         <div class="thread" id="thread">
           <section class="hero" id="hero">
             <div class="hero-logo">M</div>
-            <h1>Habari! <span class="gradient">How can I help today?</span></h1>
-            <p>Ask in English or Swahili. I can use tools, read your documents and keep personal data on your device.</p>
+            <h1><span data-i18n="hero.greeting"></span> <span class="gradient" data-i18n="hero.title"></span></h1>
+            <p data-i18n="hero.body"></p>
             <div class="cards">
-              <button class="card" type="button" data-prompt="How much is 250 USD in KES?">
+              <button class="card" type="button" data-card="currency">
                 <span class="card-icon" data-icon="currency"></span>
-                <span class="card-title">Convert currency</span>
-                <span class="card-sub">How much is 250 USD in KES?</span>
+                <span class="card-title" data-i18n="cards.currency.title"></span>
+                <span class="card-sub" data-i18n="cards.currency.sub"></span>
               </button>
-              <button class="card" type="button" data-prompt="What time is it in Nairobi right now?">
+              <button class="card" type="button" data-card="time">
                 <span class="card-icon" data-icon="clock"></span>
-                <span class="card-title">Nairobi time</span>
-                <span class="card-sub">What time is it in Nairobi right now?</span>
+                <span class="card-title" data-i18n="cards.time.title"></span>
+                <span class="card-sub" data-i18n="cards.time.sub"></span>
               </button>
-              <button class="card" type="button" data-prompt="When should I plant maize and what spacing should I use?">
+              <button class="card" type="button" data-card="docs">
                 <span class="card-icon" data-icon="leaf"></span>
-                <span class="card-title">Ask the documents</span>
-                <span class="card-sub">When should I plant maize?</span>
+                <span class="card-title" data-i18n="cards.docs.title"></span>
+                <span class="card-sub" data-i18n="cards.docs.sub"></span>
               </button>
-              <button class="card" type="button" data-prompt="Nifanye nini nikipokea ujumbe wa ulaghai wa M-Pesa?">
+              <button class="card" type="button" data-card="safety">
                 <span class="card-icon" data-icon="shield"></span>
-                <span class="card-title">Kwa Kiswahili</span>
-                <span class="card-sub">Nifanye nini nikipokea ujumbe wa ulaghai?</span>
+                <span class="card-title" data-i18n="cards.safety.title"></span>
+                <span class="card-sub" data-i18n="cards.safety.sub"></span>
               </button>
             </div>
           </section>
@@ -108,21 +112,22 @@
           <div class="attachments" id="attachments" hidden></div>
           <div class="composer-row">
             <input type="file" id="attach-input" multiple accept=".pdf,.md,.txt,.csv" hidden />
-            <button class="icon-btn" id="attach-btn" type="button" title="Attach files" aria-label="Attach files"><span data-icon="paperclip"></span></button>
-            <textarea id="input" rows="1" placeholder="Uliza swali... / Ask anything" maxlength="4000" aria-label="Message"></textarea>
-            <button class="send-btn" id="send" type="submit" aria-label="Send"><span data-icon="send"></span></button>
+            <button class="icon-btn" id="attach-btn" type="button" data-i18n-title="attach"><span data-icon="paperclip"></span></button>
+            <textarea id="input" rows="1" maxlength="4000" data-i18n-placeholder="placeholder"></textarea>
+            <button class="send-btn" id="send" type="submit" data-i18n-title="send"><span data-icon="send"></span></button>
           </div>
         </form>
-        <p class="composer-hint">Enter to send · Shift+Enter for a new line · Drop files anywhere to upload</p>
+        <p class="composer-hint" data-i18n="hint"></p>
       </div>
     </main>
   </div>
 
   <div class="drop-overlay" id="drop-overlay">
-    <div><span data-icon="upload"></span><p>Drop files to add them to the knowledge base</p></div>
+    <div><span data-icon="upload"></span><p data-i18n="drop"></p></div>
   </div>
   <div class="toasts" id="toasts" aria-live="polite"></div>
 
+  <script src="/static/i18n.js"></script>
   <script src="/static/app.js"></script>
 </body>
 </html>

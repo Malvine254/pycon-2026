@@ -2,8 +2,11 @@
 
 **PyCon Kenya 2026 workshop** - about 3 hours, hands-on.
 
-You will build **Msaidizi**, an assistant that uses **Microsoft Foundry** cloud models when they help and
+You will build **Mela**, a bilingual (Kiswahili / English) assistant that uses **Microsoft Foundry** cloud models when they help and
 **local models on your laptop** when you are offline, want to save money, or need to keep personal data private.
+
+> [!TIP]
+> **Attendees: start with the step-by-step [labs](labs/README.md).** Each lab has instructions, checkpoints and hidden solutions.
 
 ```mermaid
 flowchart LR
@@ -20,19 +23,19 @@ flowchart LR
 
 ## Agenda
 
-| Time | Module | File |
-|---|---|---|
-| 0:00 | Welcome and setup check | [workshop/00_setup_check.py](workshop/00_setup_check.py) |
-| 0:20 | Hello, cloud (Microsoft Foundry) | [workshop/01_hello_cloud.py](workshop/01_hello_cloud.py) |
-| 0:35 | Hello, local (Foundry Local / Ollama) | [workshop/02_hello_local.py](workshop/02_hello_local.py) |
-| 0:50 | One interface for every model | [workshop/03_unified_client.py](workshop/03_unified_client.py) |
-| 1:05 | Break | |
-| 1:15 | Hybrid router (offline fallback, cost, complexity) | [workshop/04_hybrid_router.py](workshop/04_hybrid_router.py) |
-| 1:40 | Privacy guard for Kenyan personal data | [workshop/05_privacy_guard.py](workshop/05_privacy_guard.py) |
-| 2:00 | Local RAG over your own documents | [workshop/06_local_rag.py](workshop/06_local_rag.py) |
-| 2:25 | Agent with tools (stretch goal) | [workshop/07_agent_tools.py](workshop/07_agent_tools.py) |
-| 2:45 | Msaidizi agent web app | [app/server.py](app/server.py) |
-| 2:55 | Wrap-up | |
+| Time | Module | Lab | File |
+|---|---|---|---|
+| 0:00 | Welcome and setup check | [Lab 00](labs/00-setup.md) | [workshop/00_setup_check.py](workshop/00_setup_check.py) |
+| 0:20 | Hello, cloud (Microsoft Foundry) | [Lab 01](labs/01-hello-cloud.md) | [workshop/01_hello_cloud.py](workshop/01_hello_cloud.py) |
+| 0:35 | Hello, local (Foundry Local / Ollama) | [Lab 02](labs/02-hello-local.md) | [workshop/02_hello_local.py](workshop/02_hello_local.py) |
+| 0:50 | One interface for every model | [Lab 03](labs/03-unified-client.md) | [workshop/03_unified_client.py](workshop/03_unified_client.py) |
+| 1:05 | Break | | |
+| 1:15 | Hybrid router (offline fallback, cost, complexity) | [Lab 04](labs/04-hybrid-router.md) | [workshop/04_hybrid_router.py](workshop/04_hybrid_router.py) |
+| 1:40 | Privacy guard for Kenyan personal data | [Lab 05](labs/05-privacy-guard.md) | [workshop/05_privacy_guard.py](workshop/05_privacy_guard.py) |
+| 2:00 | Local RAG over your own documents | [Lab 06](labs/06-local-rag.md) | [workshop/06_local_rag.py](workshop/06_local_rag.py) |
+| 2:25 | Agent with tools (stretch goal) | [Lab 07](labs/07-agent-tools.md) | [workshop/07_agent_tools.py](workshop/07_agent_tools.py) |
+| 2:45 | Mela web app and demo | [Lab 08](labs/08-web-app.md) | [app/server.py](app/server.py) |
+| 2:55 | Wrap-up | | |
 
 Each module is a Python file split into cells with `# %%`. In VS Code, click **Run Cell** above each cell
 (needs the Python and Jupyter extensions), or run the whole file with `python workshop/<file>.py`.
@@ -62,8 +65,8 @@ ollama pull qwen2.5:1.5b
 Windows (PowerShell):
 
 ```powershell
-git clone <repo-url> pycord
-cd pycord
+git clone https://github.com/Malvine254/pycon-2026.git
+cd pycon-2026
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -e ".[ui,web,dev]"
@@ -73,8 +76,8 @@ Copy-Item .env.example .env
 macOS / Linux:
 
 ```bash
-git clone <repo-url> pycord
-cd pycord
+git clone https://github.com/Malvine254/pycon-2026.git
+cd pycon-2026
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -e ".[ui,web,dev]"
@@ -111,13 +114,14 @@ All lines should show `[OK]`. If the cloud check fails you can still do modules 
 
 ## 6. Run the apps
 
-**Msaidizi agent web app** (chat with the tool-calling agent):
+**Mela agent web app** (chat with the tool-calling agent):
 
 ```bash
 python app/server.py
 ```
 
-Open http://127.0.0.1:8000. Choose **Auto**, **Local** or **Cloud** in the sidebar. Each answer shows the tools
+Open http://127.0.0.1:8000. The UI is in **Kiswahili by default** - switch with **SW / EN** in the top bar; Mela also
+replies in the chosen language. Choose **Auto**, **Local** or **Cloud** in the sidebar. Each answer shows the tools
 the agent called (click to see arguments and results), the model, the time taken and the cost in KES.
 In Auto mode, messages with personal data are answered by the local model only.
 
@@ -144,6 +148,7 @@ src/pycord/
   privacy.py           Kenyan PII detection and redaction
   rag.py               offline BM25 retrieval + RAG prompt
   agent.py             tool-calling agent
+labs/                  step-by-step lab guides (start here)
 workshop/              modules 00-07
 app/server.py          agent web app (FastAPI + app/static/)
 app/streamlit_app.py   Streamlit chat UI

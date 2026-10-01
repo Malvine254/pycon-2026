@@ -54,6 +54,22 @@ def test_search_docs_redacts_for_cloud(is_local, expect_phone):
     assert ("0712345678" in text) is expect_phone
 
 
+@pytest.mark.parametrize(("language", "expected"), [("sw", "Kiswahili"), ("en", "Always reply in English")])
+def test_respond_forces_language(language, expected):
+    captured = {}
+
+    def complete(messages, **kwargs):
+        captured["system"] = messages[0]["content"]
+        message = SimpleNamespace(content="Sawa", tool_calls=None)
+        return SimpleNamespace(usage=None, choices=[SimpleNamespace(message=message)])
+
+    provider = SimpleNamespace(is_local=True, name="fake", model="m", complete=complete, cost_kes=lambda p, c: 0.0)
+    reply = Agent(provider).respond("Hi", language=language)
+    assert expected in captured["system"]
+    assert captured["system"].startswith("You are Mela")
+    assert reply.text == "Sawa"
+
+
 def test_chunk_text_splits_long_paragraphs():
     chunks = chunk_text("a.pdf", "word " * 1000, max_chars=200)
     assert len(chunks) > 1
