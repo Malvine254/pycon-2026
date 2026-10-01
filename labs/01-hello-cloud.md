@@ -33,7 +33,7 @@ python workshop/01_hello_cloud.py
 
 The cloud lab needs the facilitator-provided values in `.env`. If those values are not available, stop here and continue with [Lab 02](02-hello-local.md).
 
-The first cell is:
+The first cell is Python code. Paste it into the editor cell, then click **Run Cell**. Do not paste it into PowerShell:
 
 ```python
 from pycord.config import Settings
@@ -50,7 +50,7 @@ You should see your endpoint and the deployment name `gpt-5-mini` printed.
 
 ## Step 2 - Ask a question
 
-Run the **second cell**:
+In VS Code, click **Run Cell** above the second `# %%` block. Paste this Python code into that cell only; it is not a terminal command:
 
 ```python
 result = cloud.ask(
@@ -70,7 +70,7 @@ AI lets you build tools for Kenyan problems - from farming advice to M-Pesa frau
 
 ## Step 3 - Look under the hood
 
-Run the **third cell**. It makes the same call with the raw `openai` SDK:
+Click **Run Cell** above the third `# %%` block. This Python cell makes the same call with the raw `openai` SDK:
 
 ```python
 response = cloud.client.chat.completions.create(

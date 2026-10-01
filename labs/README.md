@@ -64,6 +64,8 @@ Each lab has a matching file in [`workshop/`](../workshop). The files are split 
 
 | You see | Meaning |
 |---|---|
+| A fenced `python` block under a cell step | Paste or run it in the VS Code Python/Jupyter cell; do not paste it into PowerShell |
+| A fenced `powershell` or `bash` block | Run it in the matching terminal after activating `.venv` |
 | `PS>` | Run in Windows PowerShell |
 | `$` | Run in macOS / Linux terminal |
 | > [!NOTE] | Background information |
