@@ -62,6 +62,8 @@ foundry model load phi-3.5-mini
 
 Optional Ollama path: `ollama pull qwen2.5:1.5b`, then set `LOCAL_RUNTIME=ollama`.
 
+If `foundry --help` shows `service` instead of `server`, you have the legacy CLI. Use `foundry service status` and run `foundry model run phi-3.5-mini` in a separate terminal before starting the app.
+
 ## 2. Get the project and install it
 
 Windows (PowerShell):

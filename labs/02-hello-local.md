@@ -30,6 +30,8 @@ foundry model load phi-3.5-mini
 
 Keep the Foundry Local server running while you complete this lab.
 
+If your CLI lists `service` instead of `server`, use `foundry service status` and run `foundry model run phi-3.5-mini` in a separate terminal.
+
 In `.env`:
 
 ```ini

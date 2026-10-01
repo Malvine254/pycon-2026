@@ -59,6 +59,9 @@ Confirm the model is loaded before starting the Python app.
 > [!TIP]
 > Ollama is an optional alternative only. It is not required for the workshop labs.
 
+> [!NOTE]
+> Foundry Local has two CLI versions. If `foundry --help` lists `service` instead of `server`, use `foundry service status` and `foundry model run phi-3.5-mini`. The project supports both versions.
+
 ## Step 3 - Get the project and install it
 
 <details open>
