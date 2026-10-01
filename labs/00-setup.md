@@ -10,7 +10,7 @@ By the end of this lab you will have:
 
 - [ ] Python 3.10+ and the project installed in a virtual environment
 - [ ] A local model runtime (Foundry Local or Ollama) with a small model downloaded
-- [ ] A Microsoft Foundry project with `gpt-4o-mini` deployed
+- [ ] A Microsoft Foundry project with `gpt-5-mini` deployed
 - [ ] A `.env` file, and a setup check that shows `[OK]`
 
 > [!WARNING]
@@ -50,10 +50,12 @@ brew tap microsoft/foundrylocal
 brew install foundrylocal
 ```
 
-Then download and test a model:
+Then check the runtime, download the model, and test it:
 
 ```bash
-foundry model run phi-3.5-mini
+foundry server status
+foundry model download phi-3.5-mini
+foundry run phi-3.5-mini
 ```
 
 Type a question, wait for the answer, then type `/exit`.
@@ -110,8 +112,8 @@ cp .env.example .env
 
 1. Go to **https://ai.azure.com** and sign in.
 2. Create a **Foundry project** (any region close to you).
-3. Open **Models + endpoints** → **Deploy model** → choose **gpt-4o-mini** and keep the deployment name `gpt-4o-mini`.
-4. Copy the **endpoint** of your resource. It looks like `https://<your-resource>.openai.azure.com`.
+3. Open **Models + endpoints** → **Deploy model** → choose **gpt-5-mini** and use the deployment name `gpt-5-mini`.
+4. Copy the **Azure OpenAI resource endpoint**, not the project endpoint. It looks like `https://<your-resource>.openai.azure.com`.
 
 ## Step 5 - Configure `.env`
 
@@ -119,8 +121,8 @@ Open `.env` in VS Code and fill in:
 
 ```ini
 FOUNDRY_ENDPOINT=https://<your-resource>.openai.azure.com
-FOUNDRY_API_KEY=
-FOUNDRY_DEPLOYMENT=gpt-4o-mini
+FOUNDRY_API_KEY=<your-api-key>
+FOUNDRY_DEPLOYMENT=gpt-5-mini
 
 LOCAL_RUNTIME=foundry-local      # or: ollama
 LOCAL_MODEL=phi-3.5-mini
@@ -136,6 +138,9 @@ Now choose how to sign in to Foundry:
 
 > [!CAUTION]
 > Never commit `.env` or paste keys in chat. `.env` is already in `.gitignore`.
+
+> [!TIP]
+> For a shared workshop key, create a dedicated key, distribute it privately, and regenerate it in the Azure portal after the event.
 
 ## Step 6 - Run the setup check
 

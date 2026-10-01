@@ -15,7 +15,7 @@ flowchart LR
     P -- no --> N{Cloud reachable?}
     N -- no --> L
     N -- yes --> C{Complex task?}
-    C -- yes --> F[Microsoft Foundry<br/>gpt-4o-mini]
+    C -- yes --> F[Microsoft Foundry<br/>gpt-5-mini]
     C -- no --> L
     D[(data/docs)] -. RAG .-> L
     D -. RAG .-> F
@@ -55,7 +55,8 @@ Download the local model **at home**, not on the conference Wi-Fi:
 
 ```bash
 # Foundry Local
-foundry model run phi-3.5-mini      # type /exit after it answers
+foundry model download phi-3.5-mini # first run downloads about 2.2 GB
+foundry run phi-3.5-mini            # type /exit after it answers
 # or Ollama
 ollama pull qwen2.5:1.5b
 ```
@@ -86,13 +87,15 @@ cp .env.example .env
 
 ## 3. Set up Microsoft Foundry (cloud)
 
-1. Go to https://ai.azure.com and create a **Foundry project**.
-2. Deploy the model **gpt-4o-mini** and keep the deployment name `gpt-4o-mini`.
-3. Copy the resource endpoint (looks like `https://<your-resource>.openai.azure.com`) into `FOUNDRY_ENDPOINT` in `.env`.
-4. Sign in - pick one:
+1. Go to https://ai.azure.com and create or open a **Foundry project**.
+2. Deploy **gpt-5-mini** to an Azure OpenAI resource and use the deployment name `gpt-5-mini`.
+3. Copy the Azure OpenAI resource endpoint (it looks like `https://<your-resource>.openai.azure.com`) into `FOUNDRY_ENDPOINT` in `.env`.
+4. For a shared workshop, use an API key and rotate it after the event:
+  - Paste the key from the portal into `FOUNDRY_API_KEY`.
+  - Never commit `.env` or share the key in chat.
+5. For personal development, sign in - pick one:
    - **Recommended:** install the Azure CLI, run `az login`, and make sure your account has the
      **Cognitive Services OpenAI User** role on the Foundry resource. Leave `FOUNDRY_API_KEY` empty.
-   - **Quick option:** paste the key from the portal into `FOUNDRY_API_KEY`. Never commit `.env`.
 
 ## 4. Configure the local model
 

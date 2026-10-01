@@ -3,7 +3,7 @@
 # The same OpenAI-style API, but the model runs on your laptop: no internet, no cost per request.
 #
 # Before this module, in a terminal:
-# - Foundry Local: `foundry model run phi-3.5-mini` (first run downloads the model)
+# - Foundry Local: `foundry model download phi-3.5-mini`, then `foundry run phi-3.5-mini`
 # - Ollama: `ollama pull qwen2.5:1.5b` and set `LOCAL_RUNTIME=ollama` in `.env`
 
 # %%

@@ -48,7 +48,7 @@ Run the first two cells. The same three questions go to every available provider
 Q: What is the capital city of Kenya?
   [foundry-local | Phi-3.5-mini... | 2.10s | 25+9 tokens | KES 0.0000]
     The capital city of Kenya is Nairobi.
-  [foundry | gpt-4o-mini | 0.84s | 25+8 tokens | KES 0.0007]
+    [foundry | gpt-5-mini | 0.84s | 25+8 tokens | KES 0.0007]
     The capital city of Kenya is Nairobi.
 ```
 

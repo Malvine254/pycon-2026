@@ -48,7 +48,7 @@ Run the second cell. Each answer shows **which model** answered and **why**:
 
 ```text
 [foundry-local | ... | KES 0.0000] - simple task - local is free and private
-[foundry | gpt-4o-mini | ... | KES 0.0102] - complex task - using the bigger cloud model
+[foundry | gpt-5-mini | ... | KES 0.0102] - complex task - using the bigger cloud model
 ```
 
 ## Step 3 - Simulate a network outage

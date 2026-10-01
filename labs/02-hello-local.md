@@ -15,29 +15,48 @@ Run the **same prompt** as Lab 01 on a model that lives on your laptop - no inte
 
 ---
 
-## Step 1 - Make sure the runtime is ready
+## Step 1 - Choose and start a local runtime
 
-<table>
-<tr><th>Foundry Local</th><th>Ollama</th></tr>
-<tr><td>
+### Option A: Foundry Local
 
-```bash
-foundry service status
+Use this on Windows or macOS:
+
+```powershell
+foundry server status
 foundry model list
+foundry model download phi-3.5-mini
+foundry run phi-3.5-mini
 ```
 
-</td><td>
+Keep the model session open while you complete this lab. Type `/exit` when you are finished.
+
+In `.env`:
+
+```ini
+LOCAL_RUNTIME=foundry-local
+LOCAL_MODEL=phi-3.5-mini
+```
+
+### Option B: Ollama
+
+Use this on Windows, macOS, or Linux:
 
 ```bash
+ollama pull qwen2.5:1.5b
 ollama list
+ollama run qwen2.5:1.5b "Habari?"
 ```
 
-Set `LOCAL_RUNTIME=ollama` in `.env`.
+In `.env`:
 
-</td></tr>
-</table>
+```ini
+LOCAL_RUNTIME=ollama
+OLLAMA_MODEL=qwen2.5:1.5b
+```
 
-## Step 2 - Load the local provider
+Restart the terminal, Python process, or notebook kernel after changing `.env`.
+
+## Step 2 - Confirm the runtime is visible
 
 Run the **first cell**:
 
@@ -50,6 +69,8 @@ print("Runtime available:", local.is_available())
 ```
 
 Expected: `Runtime available: True`
+
+If it prints `False`, finish Step 1, open a new terminal, and run the cell again.
 
 ## Step 3 - Ask the same question as Lab 01
 
@@ -73,12 +94,12 @@ print("Base URL:", local.client.base_url)   # e.g. http://localhost:5273/v1/
 print("Model id:", local.model)
 ```
 
-## Step 5 - The offline test
+## Step 5 - Run the offline test
 
-1. **Turn off your Wi-Fi.**
-2. Run the second cell again.
-3. It still works. This is the core idea of a hybrid system.
-4. Turn Wi-Fi back on.
+1. Finish downloading the model while online.
+2. Turn off your Wi-Fi.
+3. Run the second cell again.
+4. Confirm that it still works, then turn Wi-Fi back on.
 
 ## Checkpoint
 

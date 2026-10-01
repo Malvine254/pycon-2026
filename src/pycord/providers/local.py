@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import shutil
+import re
+import subprocess
 import urllib.error
 import urllib.request
 
@@ -20,12 +22,28 @@ class FoundryLocalProvider(Provider):
         self.alias = settings.local_model
 
     def _build_client(self) -> OpenAI:
-        from foundry_local import FoundryLocalManager
+        try:
+            status = subprocess.run(
+                ["foundry", "server", "status"],
+                capture_output=True,
+                check=True,
+                text=True,
+                timeout=10,
+            ).stdout
+        except (OSError, subprocess.SubprocessError) as exc:
+            raise RuntimeError("Foundry Local server is not running. Start it with `foundry server start`.") from exc
 
-        # Starts the service, downloads the model on first use and loads it.
-        manager = FoundryLocalManager(self.alias)
-        self.model = manager.get_model_info(self.alias).id
-        return OpenAI(base_url=manager.endpoint, api_key=manager.api_key)
+        match = re.search(r"Web URLs\s+(https?://\S+)", status)
+        if not match:
+            raise RuntimeError("Foundry Local server endpoint was not found in `foundry server status`.")
+
+        client = OpenAI(base_url=f"{match.group(1)}/v1", api_key="foundry-local")
+        models = list(client.models.list().data)
+        model = next((item for item in models if self.alias.lower() in item.id.lower()), None)
+        if model is None:
+            raise RuntimeError(f"Foundry Local model '{self.alias}' is not loaded.")
+        self.model = model.id
+        return client
 
     def is_available(self) -> bool:
         return shutil.which("foundry") is not None

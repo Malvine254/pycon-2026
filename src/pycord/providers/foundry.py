@@ -4,7 +4,7 @@ from __future__ import annotations
 import socket
 from urllib.parse import urlparse
 
-from openai import AzureOpenAI
+from openai import AzureOpenAI, OpenAI
 
 from ..config import Settings
 from .base import Provider
@@ -31,10 +31,17 @@ class FoundryProvider(Provider):
         super().__init__(settings.foundry_deployment)
         self.settings = settings
 
-    def _build_client(self) -> AzureOpenAI:
+    def _build_client(self) -> OpenAI:
         s = self.settings
         if not s.foundry_endpoint:
             raise RuntimeError("FOUNDRY_ENDPOINT is not set. Copy .env.example to .env and fill it in.")
+        if urlparse(s.foundry_endpoint).hostname and urlparse(s.foundry_endpoint).hostname.endswith(".services.ai.azure.com"):
+            if not s.foundry_api_key:
+                raise RuntimeError("FOUNDRY_API_KEY is required for a Foundry project endpoint.")
+            return OpenAI(
+                base_url=f"{s.foundry_endpoint}/openai/v1",
+                api_key=s.foundry_api_key,
+            )
         if s.foundry_api_key:
             return AzureOpenAI(
                 azure_endpoint=s.foundry_endpoint,

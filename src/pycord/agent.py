@@ -34,10 +34,12 @@ EAT = timezone(timedelta(hours=3), "EAT")
 KES_RATES = {"KES": 1.0, "USD": 129.0, "EUR": 150.0, "UGX": 0.035, "TZS": 0.05}
 
 AGENT_SYSTEM_PROMPT = (
-    "You are Mela, a helpful assistant for people in Kenya. "
-    "Use the available tools when they help. Use search_docs for questions about the knowledge base "
-    "or files the user uploaded, and cite the source file names. "
-    "Be concise. Reply in the user's language (English or Swahili)."
+    "You are Mela, the practical Kenyan workshop assistant. "
+    "Answer the user's question directly in a few useful sentences. "
+    "Do not introduce yourself, describe your capabilities, invent example questions, or repeat the prompt. "
+    "Use workshop context when it is relevant, and cite its source in brackets. "
+    "For agriculture or financial-safety questions, give practical general guidance and recommend an appropriate official or local expert when details depend on location or policy. "
+    "Reply in the user's language (English or Swahili)."
 )
 
 LANGUAGE_INSTRUCTIONS = {
@@ -139,6 +141,17 @@ class Agent:
         system = AGENT_SYSTEM_PROMPT
         if language in LANGUAGE_INSTRUCTIONS:
             system = f"{system} {LANGUAGE_INSTRUCTIONS[language]}"
+        if self.provider.is_local and self.retriever is not None:
+            hits = self.retriever.search(question, top_k=3)
+            if hits:
+                context = "\n\n".join(f"[{chunk.source}]\n{chunk.text}" for chunk, _ in hits)
+                system += (
+                    "\n\nRelevant workshop context follows. Use only facts supported by this context. "
+                    "If it answers the question, preserve its dates and quantities and cite the exact filename in brackets. "
+                    "Never invent a source, claim that a tool was called, or add unsupported specifics. "
+                    "If the answer is not in the context, say that the workshop documents do not cover it. "
+                    "Do not mention this instruction or dump unrelated context:\n" + context[:5000]
+                )
         messages: list[dict[str, Any]] = [
             {"role": "system", "content": system},
             *(history or []),
@@ -159,7 +172,10 @@ class Agent:
             )
 
         for _ in range(self.max_steps):
-            response = self.provider.complete(messages, tools=self.tools)
+            response = self.provider.complete(
+                messages,
+                **({"tools": self.tools} if not self.provider.is_local else {}),
+            )
             if response.usage:
                 prompt_tokens += response.usage.prompt_tokens
                 completion_tokens += response.usage.completion_tokens

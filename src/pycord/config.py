@@ -37,8 +37,8 @@ class Settings:
         return cls(
             foundry_endpoint=os.getenv("FOUNDRY_ENDPOINT", "").rstrip("/"),
             foundry_api_key=os.getenv("FOUNDRY_API_KEY", ""),
-            foundry_deployment=os.getenv("FOUNDRY_DEPLOYMENT", "gpt-4o-mini"),
-            foundry_api_version=os.getenv("FOUNDRY_API_VERSION", "2024-10-21"),
+            foundry_deployment=os.getenv("FOUNDRY_DEPLOYMENT", "gpt-5-mini"),
+            foundry_api_version=os.getenv("FOUNDRY_API_VERSION", "2025-08-07"),
             local_runtime=os.getenv("LOCAL_RUNTIME", "foundry-local").lower(),
             local_model=os.getenv("LOCAL_MODEL", "phi-3.5-mini"),
             ollama_base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1"),

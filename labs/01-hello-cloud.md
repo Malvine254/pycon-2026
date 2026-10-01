@@ -14,7 +14,7 @@ Send your first prompt to a model deployed in **Microsoft Foundry**, and see the
 sequenceDiagram
     participant P as Your Python code
     participant F as Microsoft Foundry
-    P->>F: chat.completions.create(model="gpt-4o-mini", messages)
+    P->>F: chat.completions.create(model="gpt-5-mini", messages)
     F-->>P: answer + token usage
     P->>P: cost_kes = tokens x price x USD_TO_KES
 ```
@@ -33,7 +33,7 @@ settings = Settings.from_env()
 cloud = get_cloud_provider(settings)
 ```
 
-You should see your endpoint and the deployment name `gpt-4o-mini` printed.
+You should see your endpoint and the deployment name `gpt-5-mini` printed.
 
 > [!NOTE]
 > `Settings.from_env()` reads your `.env` file. Nothing is hard-coded, so the same code works for everyone.
@@ -55,7 +55,7 @@ Example output (your text will differ):
 
 ```text
 AI lets you build tools for Kenyan problems - from farming advice to M-Pesa fraud detection...
-[foundry | gpt-4o-mini | 1.21s | 38+52 tokens | KES 0.0047]
+[foundry | gpt-5-mini | 1.21s | 38+52 tokens | KES 0.0047]
 ```
 
 ## Step 3 - Look under the hood
@@ -81,7 +81,7 @@ Open [`foundry.py`](../src/pycord/providers/foundry.py) and find `_build_client`
 
 ## Checkpoint
 
-- [ ] You got an answer from `gpt-4o-mini`
+- [ ] You got an answer from `gpt-5-mini`
 - [ ] You can read the latency, tokens and KES cost from `result.summary()`
 
 ## Exercises

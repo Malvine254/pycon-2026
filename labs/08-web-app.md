@@ -35,6 +35,9 @@ Open **http://127.0.0.1:8000**.
 > [!NOTE]
 > The server only listens on `127.0.0.1` (your own laptop). Nobody else on the conference Wi-Fi can reach it.
 
+> [!TIP]
+> Mela is a general assistant grounded by RAG. Ask normal questions, then try the sample maize, M-Pesa, and workshop documents to see retrieval improve the answer. Local Phi receives retrieved passages directly; cloud Mela uses the allow-listed `search_docs` tool.
+
 ## Step 2 - Take the tour
 
 | Area | What to try |
@@ -63,6 +66,9 @@ Open **http://127.0.0.1:8000**.
 > [!IMPORTANT]
 > Uploads are kept **in memory only** (never written to disk), limited to PDF / MD / TXT / CSV, 5 MB each, 20 files total. Restarting the server clears them.
 
+> [!TIP]
+> Mela is general-purpose but grounded in the workshop knowledge base: maize farming, M-Pesa safety, workshop FAQ, and documents you upload. Local Phi uses retrieved context without cloud access; cloud Mela can also use the allow-listed tools.
+
 ## Step 4 - Show the privacy guard
 
 In **Auto** mode, type: *"Nitumie ukumbusho kwa 0712345678"* (Send me a reminder on 0712345678).
@@ -70,7 +76,19 @@ In **Auto** mode, type: *"Nitumie ukumbusho kwa 0712345678"* (Send me a reminder
 - With a local model: the footer says *data binafsi imegunduliwa - imebaki kwenye kifaa hiki*.
 - Without a local model: Mela **refuses** to send it to the cloud.
 
-## Step 5 - Practise the 5-minute demo
+The security demonstration is visible in three places: the route footer explains why the model was selected, document results are redacted before cloud calls, and uploaded files are held in memory rather than written to disk.
+
+## Step 5 - Explain the security model
+
+1. Mela detects Kenyan phone numbers, IDs, KRA PINs, M-Pesa codes, and email addresses.
+2. Auto mode keeps messages containing personal data on the local model.
+3. Cloud document context is redacted before it leaves the laptop.
+4. Uploaded files are held in memory only and disappear when the server stops.
+5. Tools are allow-listed; Mela cannot execute arbitrary code or access a user's accounts.
+
+The API is bound to `127.0.0.1` for the workshop. Never share `.env`, API keys, uploaded documents, or screenshots containing personal data.
+
+## Step 6 - Practise the 5-minute demo
 
 | Minute | Do this | Say this |
 |---|---|---|
