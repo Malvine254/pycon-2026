@@ -108,28 +108,28 @@ cp .env.example .env
 > [!WARNING]
 > PowerShell says *"running scripts is disabled"*? Run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once, then activate again.
 
-## Step 4 - Set up Microsoft Foundry (cloud)
+## Step 4 - Add the provided Azure OpenAI settings
 
-1. Go to **https://ai.azure.com** and sign in.
-2. Create a **Foundry project** (any region close to you).
-3. Open **Models + endpoints** → **Deploy model** → choose **gpt-5-mini** and use the deployment name `gpt-5-mini`.
-4. Copy the **Azure OpenAI resource endpoint**, not the project endpoint. It looks like `https://<your-resource>.openai.azure.com`.
+The facilitator provides the endpoint, API key, deployment name, and API version. No Azure resource creation is required for attendees.
+
+Optional: facilitators or attendees using their own Azure account may create a resource and deployment at **https://ai.azure.com**.
 
 ## Step 5 - Configure `.env`
 
 Open `.env` in VS Code and fill in:
 
 ```ini
-FOUNDRY_ENDPOINT=https://<your-resource>.openai.azure.com
-FOUNDRY_API_KEY=<your-api-key>
+FOUNDRY_ENDPOINT=https://<provided-resource>.openai.azure.com
+FOUNDRY_API_KEY=<provided-key>
 FOUNDRY_DEPLOYMENT=gpt-5-mini
+FOUNDRY_API_VERSION=2025-08-07
 
 LOCAL_RUNTIME=foundry-local      # or: ollama
 LOCAL_MODEL=phi-3.5-mini
 OLLAMA_MODEL=qwen2.5:1.5b       # optional Ollama path
 ```
 
-Now choose how to sign in to Foundry:
+For a personal Azure account, you may instead choose Entra ID:
 
 | Option | How | When |
 |---|---|---|

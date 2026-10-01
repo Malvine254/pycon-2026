@@ -88,24 +88,20 @@ cp .env.example .env
 
 ## 3. Set up Microsoft Foundry (cloud)
 
-1. Go to https://ai.azure.com and create or open a **Foundry project**.
-2. Deploy **gpt-5-mini** to an Azure OpenAI resource and use the deployment name `gpt-5-mini`.
-3. Copy the Azure OpenAI resource endpoint (it looks like `https://<your-resource>.openai.azure.com`) into `FOUNDRY_ENDPOINT` in `.env`.
-4. For a shared workshop, use an API key and rotate it after the event:
-  - Paste the key from the portal into `FOUNDRY_API_KEY`.
-  - Never commit `.env` or share the key in chat.
-5. For personal development, sign in - pick one:
+For the workshop, the facilitator provides the Azure OpenAI endpoint, API key, deployment name, and API version. Copy those values into `.env`:
+
+```ini
+FOUNDRY_ENDPOINT=https://<provided-resource>.openai.azure.com
+FOUNDRY_API_KEY=<provided-key>
+FOUNDRY_DEPLOYMENT=gpt-5-mini
+FOUNDRY_API_VERSION=2025-08-07
+```
+
+Never commit `.env` or share the key in chat. The facilitator should rotate the shared key after the workshop.
+
+Creating an Azure resource or deploying a model is **optional** for facilitators and personal Azure accounts. If you use your own Azure account, sign in - pick one:
    - **Recommended:** install the Azure CLI, run `az login`, and make sure your account has the
      **Cognitive Services OpenAI User** role on the Foundry resource. Leave `FOUNDRY_API_KEY` empty.
-
-  The cloud settings should look like this (keep the real key only in `.env`):
-
-  ```ini
-  FOUNDRY_ENDPOINT=https://<your-resource>.openai.azure.com
-  FOUNDRY_API_KEY=<your-key>
-  FOUNDRY_DEPLOYMENT=gpt-5-mini
-  FOUNDRY_API_VERSION=2025-08-07
-  ```
 
 ## 4. Configure the local model
 
