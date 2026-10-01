@@ -53,8 +53,8 @@ for saved_path in list_uploads():
     except (OSError, DocumentError):
         continue
 agents = {
-    "local": Agent(local, retriever, instructions=custom_instructions),
-    "cloud": Agent(cloud, retriever, instructions=custom_instructions),
+    "local": Agent(local, retriever, instructions=custom_instructions, usd_to_kes=settings.usd_to_kes),
+    "cloud": Agent(cloud, retriever, instructions=custom_instructions, usd_to_kes=settings.usd_to_kes),
 }
 
 app = FastAPI(title="Mela")

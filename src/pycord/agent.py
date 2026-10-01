@@ -87,12 +87,18 @@ TOOLS: list[dict[str, Any]] = [
 ]
 
 
-def convert_currency(amount: float, from_currency: str, to_currency: str) -> dict[str, Any]:
+def convert_currency(amount: float, from_currency: str, to_currency: str, usd_to_kes: float = 129.0) -> dict[str, Any]:
     src, dst = from_currency.upper(), to_currency.upper()
-    if src not in KES_RATES or dst not in KES_RATES:
+    rates = {**KES_RATES, "USD": usd_to_kes}
+    if src not in rates or dst not in rates:
         return {"error": f"Supported currencies: {', '.join(KES_RATES)}"}
-    value = float(amount) * KES_RATES[src] / KES_RATES[dst]
-    return {"amount": round(value, 2), "currency": dst, "note": "approximate workshop rates"}
+    value = float(amount) * rates[src] / rates[dst]
+    return {
+        "amount": round(value, 2),
+        "currency": dst,
+        "rate": usd_to_kes,
+        "note": "approximate configured workshop rate",
+    }
 
 
 def nairobi_time() -> dict[str, str]:
@@ -107,18 +113,23 @@ class Agent:
         retriever: BM25Retriever | None = None,
         max_steps: int = 5,
         instructions: str = "",
+        usd_to_kes: float = 129.0,
     ) -> None:
         self.provider = provider
         self.retriever = retriever
         self.max_steps = max_steps
         self.instructions = instructions.strip()
+        self.usd_to_kes = usd_to_kes
         self.functions: dict[str, Callable[..., Any]] = {
-            "convert_currency": convert_currency,
+            "convert_currency": self._convert_currency,
             "nairobi_time": nairobi_time,
         }
         if retriever is not None:
             self.functions["search_docs"] = self._search_docs
         self.tools = [t for t in TOOLS if t["function"]["name"] in self.functions]
+
+    def _convert_currency(self, amount: float, from_currency: str, to_currency: str) -> dict[str, Any]:
+        return convert_currency(amount, from_currency, to_currency, usd_to_kes=self.usd_to_kes)
 
     def _search_docs(self, query: str) -> dict[str, Any]:
         hits = self.retriever.search(query, top_k=3) if self.retriever else []
