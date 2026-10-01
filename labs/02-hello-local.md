@@ -58,7 +58,7 @@ Restart the terminal, Python process, or notebook kernel after changing `.env`.
 
 ## Step 2 - Confirm the runtime is visible
 
-Run the **first cell**:
+In VS Code, click **Run Cell** above the first `# %%` block. This is Python code; do not paste it into PowerShell:
 
 ```python
 from pycord.config import Settings
@@ -70,11 +70,11 @@ print("Runtime available:", local.is_available())
 
 Expected: `Runtime available: True`
 
-If it prints `False`, finish Step 1, open a new terminal, and run the cell again.
+If it prints `False`, finish Step 1, open a new terminal, and click **Run Cell** on the same Python cell again.
 
 ## Step 3 - Ask the same question as Lab 01
 
-Run the **second cell**.
+Click **Run Cell** above the second `# %%` block. This is Python code; do not paste it into PowerShell.
 
 > [!IMPORTANT]
 > The **first** call is slow: the model is loaded from disk into memory. Calls after that are much faster.
@@ -87,7 +87,7 @@ Notice **KES 0.0000** - local calls are free.
 
 ## Step 4 - See where the request went
 
-Run the **third cell**:
+Click **Run Cell** above the third `# %%` block. This is Python code; do not paste it into PowerShell:
 
 ```python
 print("Base URL:", local.client.base_url)   # e.g. http://localhost:5273/v1/
@@ -98,7 +98,7 @@ print("Model id:", local.model)
 
 1. Finish downloading the model while online.
 2. Turn off your Wi-Fi.
-3. Run the second cell again.
+3. Return to VS Code and click **Run Cell** on the second `# %%` block again.
 4. Confirm that it still works, then turn Wi-Fi back on.
 
 ## Checkpoint

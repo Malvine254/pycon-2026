@@ -38,7 +38,7 @@ sequenceDiagram
 
 ## Step 1 - Create the agent
 
-Run the first cell:
+In VS Code, click **Run Cell** above the first `# %%` block. This is Python code; do not paste it into PowerShell:
 
 ```text
 Tools: ['convert_currency', 'nairobi_time', 'search_docs']
@@ -46,7 +46,7 @@ Tools: ['convert_currency', 'nairobi_time', 'search_docs']
 
 ## Step 2 - Ask questions that need tools
 
-Run the second cell. Watch the `-> tool` lines - that is the model choosing tools:
+Click **Run Cell** above the second `# %%` block. Watch the `-> tool` lines - that is the model choosing tools:
 
 ```text
 Q: How much is 250 USD in KES?

@@ -42,7 +42,7 @@ Open [`base.py`](../src/pycord/providers/base.py). Notice:
 
 ## Step 2 - Run the comparison
 
-Run the first two cells. The same three questions go to every available provider:
+In VS Code, click **Run Cell** above the first two `# %%` blocks. The same three questions go to every available provider:
 
 ```text
 Q: What is the capital city of Kenya?

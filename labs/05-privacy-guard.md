@@ -30,7 +30,7 @@ Detect Kenyan personal data, keep it on the device, and learn two privacy patter
 
 ## Step 1 - Detect personal data
 
-Run the first cell:
+In VS Code, click **Run Cell** above the first `# %%` block. This is Python code; do not paste it into PowerShell:
 
 ```text
 True [('mpesa_code', 'QFT3XYZ12A'), ('phone_ke', '0712345678')]
@@ -41,7 +41,7 @@ False []
 
 ## Step 2 - Pattern 1: keep it local
 
-Run the second cell. The router sees personal data and answers locally:
+Click **Run Cell** above the second `# %%` block. The router sees personal data and answers locally:
 
 ```text
 [foundry-local | ...] - personal data detected - keeping it on this device
@@ -52,7 +52,7 @@ Run the second cell. The router sees personal data and answers locally:
 
 ## Step 3 - Pattern 2: redact, then use the cloud
 
-Run the third cell:
+Click **Run Cell** above the third `# %%` block:
 
 ```text
 [MPESA_CODE] Confirmed. Ksh1,500.00 sent to JOHN [PHONE_KE]

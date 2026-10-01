@@ -27,7 +27,7 @@ flowchart LR
 
 ## Step 1 - Load and chunk the documents
 
-Run the first cell:
+In VS Code, click **Run Cell** above the first `# %%` block. This is Python code; do not paste it into PowerShell:
 
 ```text
 Loaded 6 chunks from .../data/docs
@@ -37,7 +37,7 @@ Each Markdown file is split on blank lines into chunks of up to ~800 characters 
 
 ## Step 2 - Search
 
-Run the second cell:
+Click **Run Cell** above the second `# %%` block:
 
 ```text
 4.12  maize_farming.md: 'A common spacing is 75 cm between rows ...'
@@ -47,7 +47,7 @@ The highest score should come from `maize_farming.md`.
 
 ## Step 3 - Ask questions grounded in the documents
 
-Run the third cell. It asks three questions - including one in **Kiswahili**:
+Click **Run Cell** above the third `# %%` block. It asks three questions - including one in **Kiswahili**:
 
 ```text
 Q: Nifanye nini nikipokea ujumbe wa ulaghai?
@@ -83,7 +83,7 @@ Create `data/docs/meetup_faq.md`:
 On the last Saturday of every month, 10am to 1pm.
 ```
 
-Re-run the cells and ask: *"When does the Nairobi Python meetup happen?"*
+Return to the relevant VS Code cell and click **Run Cell** again, then ask: *"When does the Nairobi Python meetup happen?"*
 
 </details>
 

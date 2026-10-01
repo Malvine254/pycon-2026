@@ -31,7 +31,7 @@ If the chosen model fails, the router tries the other one - **except** for perso
 
 ## Step 1 - See the decisions
 
-Run the first cell. `router.decide()` only *decides* - it does not call any model:
+In VS Code, click **Run Cell** above the first `# %%` block. `router.decide()` only *decides* - it does not call any model:
 
 ```text
 local | simple task - local is free and private | Habari yako?
@@ -44,7 +44,7 @@ local | personal data detected - keeping it on this device | My number is 071234
 
 ## Step 2 - Route real requests
 
-Run the second cell. Each answer shows **which model** answered and **why**:
+Click **Run Cell** above the second `# %%` block. Each answer shows **which model** answered and **why**:
 
 ```text
 [foundry-local | ... | KES 0.0000] - simple task - local is free and private
@@ -53,7 +53,7 @@ Run the second cell. Each answer shows **which model** answered and **why**:
 
 ## Step 3 - Simulate a network outage
 
-Run the third cell. It points the cloud provider at `https://offline.invalid`:
+Click **Run Cell** above the third `# %%` block. It points the cloud provider at `https://offline.invalid`:
 
 ```text
 [foundry-local | ...] - cloud unreachable - working offline
