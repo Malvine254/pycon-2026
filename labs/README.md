@@ -58,6 +58,9 @@ Each lab has a matching file in [`workshop/`](../workshop). The files are split 
 > A `# %%` line marks a runnable cell; it is not something you type into the terminal. If a cloud lab fails because the provided endpoint or key is missing, skip to the local Phi lab and ask a facilitator for the shared settings.
 
 > [!IMPORTANT]
+> Run files under `workshop/` for the lab exercises. Files under `src/pycord/` are library modules to read or import, not standalone scripts; do not use **Run Python File** on them.
+
+> [!IMPORTANT]
 > Always activate the virtual environment first: `.\.venv\Scripts\Activate.ps1` (Windows) or `source .venv/bin/activate` (macOS / Linux). The leading `.` tells PowerShell to run the script in the current shell. On Windows, confirm the prompt begins with `(.venv) PS` before running any lab command.
 
 ## Conventions used in the labs

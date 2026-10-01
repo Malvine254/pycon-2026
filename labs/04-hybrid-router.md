@@ -10,6 +10,9 @@ Build the "brain" of the hybrid system: a router that decides, **per request**, 
 
 **File:** [`workshop/04_hybrid_router.py`](../workshop/04_hybrid_router.py) · **Code to read:** [`src/pycord/router.py`](../src/pycord/router.py)
 
+> [!IMPORTANT]
+> Run the `workshop/04_hybrid_router.py` cells. Do not use **Run Python File** on `src/pycord/router.py`; that file is a package module and its relative imports only work when the package is loaded by the workshop or tests.
+
 ## The rules (in order)
 
 ```mermaid
