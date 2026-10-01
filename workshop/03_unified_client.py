@@ -23,7 +23,7 @@ for question in questions:
         if not provider.is_available():
             print(f"  {provider.name}: not available, skipping")
             continue
-        result = provider.ask(question, temperature=0)
+        result = provider.ask(question)
         print(f"  {result.summary()}\n    {result.text.strip()[:200]}")
 
 # %% [markdown]

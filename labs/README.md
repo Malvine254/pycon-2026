@@ -43,8 +43,19 @@ flowchart LR
 
 Each lab has a matching file in [`workshop/`](../workshop). The files are split into cells with `# %%`:
 
-- **VS Code (recommended):** open the file and click **Run Cell** above each cell. Output appears in the Interactive window.
-- **Terminal:** `python workshop/01_hello_cloud.py` runs the whole file.
+- **VS Code (recommended):** open the file, click **Run Cell** above the first cell, and continue from top to bottom. Output appears in the Interactive window.
+- **Terminal:** activate the environment, set the source path, then run the file from the project folder:
+
+    ```powershell
+    .venv\Scripts\Activate.ps1
+    $env:PYTHONPATH = "src"
+    python workshop/01_hello_cloud.py
+    ```
+
+    Replace the filename with the workshop file for the lab you are taking.
+
+> [!NOTE]
+> A `# %%` line marks a runnable cell; it is not something you type into the terminal. If a cloud lab fails because the provided endpoint or key is missing, skip to the local Phi lab and ask a facilitator for the shared settings.
 
 > [!IMPORTANT]
 > Always activate the virtual environment first: `.venv\Scripts\Activate.ps1` (Windows) or `source .venv/bin/activate` (macOS / Linux).

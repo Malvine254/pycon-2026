@@ -23,7 +23,17 @@ sequenceDiagram
 
 ## Step 1 - Load the settings and the cloud provider
 
-Open `workshop/01_hello_cloud.py` and run the **first cell**:
+Open [`workshop/01_hello_cloud.py`](../workshop/01_hello_cloud.py). In VS Code, click **Run Cell** above the first `# %%` block. If you prefer the terminal, run:
+
+```powershell
+.venv\Scripts\Activate.ps1
+$env:PYTHONPATH = "src"
+python workshop/01_hello_cloud.py
+```
+
+The cloud lab needs the facilitator-provided values in `.env`. If those values are not available, stop here and continue with [Lab 02](02-hello-local.md).
+
+The first cell is:
 
 ```python
 from pycord.config import Settings
@@ -86,18 +96,17 @@ Open [`foundry.py`](../src/pycord/providers/foundry.py) and find `_build_client`
 
 ## Exercises
 
-**1.** Call `cloud.ask(...)` with `temperature=0` and then `temperature=1`. Run each twice. What changes?
+**1.** Ask the same question twice and compare the answers. Do not add a `temperature` argument: the shared `gpt-5-mini` deployment uses its default setting.
 
 <details>
 <summary>Solution</summary>
 
 ```python
-for temp in (0, 1):
-    for _ in range(2):
-        print(temp, cloud.ask("Give me a name for a Kenyan tech meetup.", temperature=temp).text)
+for _ in range(2):
+    print(cloud.ask("Give me a name for a Kenyan tech meetup.").text)
 ```
 
-`temperature=0` gives (almost) the same answer every time; `temperature=1` is more creative and varied.
+Compare the two answers and discuss why model responses can vary.
 
 </details>
 

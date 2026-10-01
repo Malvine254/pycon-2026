@@ -34,6 +34,6 @@ print(response.usage)
 
 # %% [markdown]
 # ## Exercises
-# 1. Pass `temperature=0` and then `temperature=1` to `cloud.ask` and compare answers.
+# 1. Ask the same question twice and compare how the model answers vary.
 # 2. Ask the same question in Swahili. How good is the reply?
 # 3. Using `result.cost_kes`, how many requests like this fit in a KES 100 budget?

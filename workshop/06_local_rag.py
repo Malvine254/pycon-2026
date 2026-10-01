@@ -22,7 +22,7 @@ local = get_local_provider(Settings.from_env())
 
 def ask_docs(question: str) -> None:
     hits = retriever.search(question)
-    result = local.chat(build_rag_messages(question, hits), temperature=0)
+    result = local.chat(build_rag_messages(question, hits))
     print(f"Q: {question}\n{result.text.strip()}\n{result.summary()}\n")
 
 

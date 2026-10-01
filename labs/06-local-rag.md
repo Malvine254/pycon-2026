@@ -99,7 +99,7 @@ from pycord.providers import get_cloud_provider
 
 cloud = get_cloud_provider(Settings.from_env())
 hits = retriever.search("When should I plant maize?")
-print(cloud.chat(build_rag_messages("When should I plant maize?", hits), temperature=0).text)
+print(cloud.chat(build_rag_messages("When should I plant maize?", hits)).text)
 ```
 
 </details>
