@@ -128,6 +128,32 @@ Ollama: `ollama pull qwen2.5:0.5b` and set `OLLAMA_MODEL=qwen2.5:0.5b`.
 
 Restart the Python cell / kernel so the new settings are loaded. Smaller models are faster and lighter on memory, but weaker at reasoning and Kiswahili.
 
+## Change the local model
+
+To switch Foundry Local models:
+
+1. Check the available model names:
+
+	```powershell
+	foundry model list
+	```
+
+2. Set the selected alias in `.env`:
+
+	```ini
+	LOCAL_RUNTIME=foundry-local
+	LOCAL_MODEL=phi-3.5-mini
+	```
+
+3. Download and load that same alias:
+
+	```powershell
+	foundry model download phi-3.5-mini
+	foundry model load phi-3.5-mini
+	```
+
+4. Restart the Python cell or the app. The provider checks that the selected alias is actually loaded; if it is missing, the lab skips the local provider instead of crashing.
+
 </details>
 
 ## Troubleshooting

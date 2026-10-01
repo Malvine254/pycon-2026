@@ -1,6 +1,7 @@
 """Local providers: Foundry Local and Ollama (both expose an OpenAI-compatible API)."""
 from __future__ import annotations
 
+import json
 import shutil
 import re
 import subprocess
@@ -46,7 +47,24 @@ class FoundryLocalProvider(Provider):
         return client
 
     def is_available(self) -> bool:
-        return shutil.which("foundry") is not None
+        if shutil.which("foundry") is None:
+            return False
+        try:
+            status = subprocess.run(
+                ["foundry", "server", "status"],
+                capture_output=True,
+                check=True,
+                text=True,
+                timeout=5,
+            ).stdout
+            match = re.search(r"Web URLs\s+(https?://\S+)", status)
+            if "Ready" not in status or not match:
+                return False
+            with urllib.request.urlopen(f"{match.group(1)}/v1/models", timeout=2) as response:
+                models = json.loads(response.read()).get("data", [])
+            return any(self.alias.lower() in str(model.get("id", "")).lower() for model in models)
+        except (OSError, ValueError, json.JSONDecodeError, subprocess.SubprocessError):
+            return False
 
 
 class OllamaProvider(Provider):
