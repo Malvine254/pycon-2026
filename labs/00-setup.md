@@ -33,11 +33,7 @@ Install these if you don't have them:
 
 ## Step 2 - Install a local model runtime
 
-Pick **one**:
-
-<table>
-<tr><th>Foundry Local (recommended, Windows / macOS)</th><th>Ollama (Windows / macOS / Linux)</th></tr>
-<tr><td>
+Use **Foundry Local + Phi** for the workshop:
 
 ```powershell
 # Windows
@@ -55,25 +51,13 @@ Then check the runtime, download the model, and test it:
 ```bash
 foundry server status
 foundry model download phi-3.5-mini
-foundry run phi-3.5-mini
+foundry model load phi-3.5-mini
 ```
 
-Type a question, wait for the answer, then type `/exit`.
-
-</td><td>
-
-Install from ollama.com, then:
-
-```bash
-ollama pull qwen2.5:1.5b
-ollama run qwen2.5:1.5b "Habari?"
-```
-
-</td></tr>
-</table>
+Confirm the model is loaded before starting the Python app.
 
 > [!TIP]
-> Foundry Local uses Phi for this workshop. Ollama remains an optional alternative when a smaller model is needed.
+> Ollama is an optional alternative only. It is not required for the workshop labs.
 
 ## Step 3 - Get the project and install it
 

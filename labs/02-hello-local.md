@@ -37,7 +37,7 @@ LOCAL_RUNTIME=foundry-local
 LOCAL_MODEL=phi-3.5-mini
 ```
 
-### Option B: Ollama
+### Optional alternative: Ollama
 
 Use this on Windows, macOS, or Linux:
 
