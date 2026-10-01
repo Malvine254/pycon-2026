@@ -10,6 +10,19 @@ Turn the model into an **agent**: it decides which Python function to call, we r
 
 **File:** [`workshop/07_agent_tools.py`](../workshop/07_agent_tools.py) · **Code to read:** [`src/pycord/agent.py`](../src/pycord/agent.py)
 
+## Before you start
+
+This lab uses the facilitator-provided cloud settings because reliable tool calling is demonstrated with `gpt-5-mini`. Keep `(.venv)` active and confirm the cloud values are in `.env`.
+
+If you also want to run the local text-only comparison, use:
+
+```powershell
+foundry server start
+foundry model load phi-3.5-mini
+```
+
+Local Phi can answer text questions, but this project intentionally routes tool-heavy requests to the cloud path.
+
 ```mermaid
 sequenceDiagram
     participant U as User

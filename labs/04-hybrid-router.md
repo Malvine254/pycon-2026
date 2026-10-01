@@ -13,6 +13,17 @@ Build the "brain" of the hybrid system: a router that decides, **per request**, 
 > [!IMPORTANT]
 > Run the `workshop/04_hybrid_router.py` cells. Do not use **Run Python File** on `src/pycord/router.py`; that file is a package module and its relative imports only work when the package is loaded by the workshop or tests.
 
+## Before you start
+
+In a terminal with `(.venv)` active, make sure local Phi is loaded:
+
+```powershell
+foundry server start
+foundry model load phi-3.5-mini
+```
+
+The cloud route also needs the facilitator-provided Azure OpenAI values in `.env`. If they are unavailable, the offline and local examples still work.
+
 ## The rules (in order)
 
 ```mermaid

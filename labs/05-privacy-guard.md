@@ -10,6 +10,17 @@ Detect Kenyan personal data, keep it on the device, and learn two privacy patter
 
 **File:** [`workshop/05_privacy_guard.py`](../workshop/05_privacy_guard.py) · **Code to read:** [`src/pycord/privacy.py`](../src/pycord/privacy.py)
 
+## Before you start
+
+In a terminal with `(.venv)` active, load local Phi:
+
+```powershell
+foundry server start
+foundry model load phi-3.5-mini
+```
+
+No FastAPI server is needed for this lab. The cloud comparison is optional and uses the facilitator-provided `.env` settings.
+
 > [!IMPORTANT]
 > Kenya's **Data Protection Act (2019)** regulates how personal data is processed and transferred. Sending customer data to a cloud API is a design decision, not an accident.
 

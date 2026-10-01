@@ -10,6 +10,17 @@ Make the model answer from **your documents** instead of its memory, with citati
 
 **File:** [`workshop/06_local_rag.py`](../workshop/06_local_rag.py) · **Code to read:** [`src/pycord/rag.py`](../src/pycord/rag.py) · **Documents:** [`data/docs/`](../data/docs)
 
+## Before you start
+
+In a terminal with `(.venv)` active, load local Phi:
+
+```powershell
+foundry server start
+foundry model load phi-3.5-mini
+```
+
+This lab does not need the FastAPI app. It searches the sample documents directly from the Python cell.
+
 ```mermaid
 flowchart LR
     Q[Question] --> S[BM25 search]
