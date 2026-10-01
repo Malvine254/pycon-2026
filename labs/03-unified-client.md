@@ -1,4 +1,4 @@
-# Lab 03 - One interface, many models
+# Lab 03 - One interface: Phi and Foundry
 
 > **Time:** 15 minutes · **Level:** Intermediate · **Works offline:** Partly
 
@@ -6,7 +6,7 @@
 
 ## Goal
 
-Understand the `Provider` abstraction that hides the differences between cloud and local models, and write your own provider.
+Use one Python interface to ask the same questions to local Phi and the cloud model.
 
 **File:** [`workshop/03_unified_client.py`](../workshop/03_unified_client.py) · **Code to read:** [`src/pycord/providers/base.py`](../src/pycord/providers/base.py)
 
@@ -23,26 +23,32 @@ classDiagram
     }
     Provider <|-- FoundryProvider
     Provider <|-- FoundryLocalProvider
-    Provider <|-- OllamaProvider
-    Provider <|-- MyProvider : you write this
 ```
 
 ---
 
-## Step 1 - Read the base class
+## Step 1 - Prepare the two providers
 
-Open [`base.py`](../src/pycord/providers/base.py). Notice:
+Before opening the workshop file:
 
-- `client` is **lazy** - it is only created on first use. Start Foundry Local and load Phi before running the local cells.
-- `chat()` measures latency, reads token usage and computes cost - **once**, for every provider.
-- Subclasses only implement `_build_client()` and `is_available()`.
+1. Activate `.venv` using the instructions in the [lab guide](README.md).
+2. Start Foundry Local and load Phi:
+
+    ```powershell
+    foundry server start
+    foundry model load phi-3.5-mini
+    ```
+
+3. Make sure the facilitator-provided cloud values are in `.env`.
+
+Open [`base.py`](../src/pycord/providers/base.py) and notice that every provider exposes the same `ask()`, `chat()`, `is_available()`, and `ChatResult` interface.
 
 > [!TIP]
-> This is the *template method* pattern: shared behaviour in the base class, small differences in subclasses.
+> The provider hides connection details so the workshop code can use local Phi and Foundry in the same way.
 
 ## Step 2 - Run the comparison
 
-In VS Code, click **Run Cell** above the first two `# %%` blocks. The same three questions go to every available provider:
+In VS Code, open [`workshop/03_unified_client.py`](../workshop/03_unified_client.py) and click **Run Cell** above the first two `# %%` blocks. The same three questions go to Phi and Foundry:
 
 ```text
 Q: What is the capital city of Kenya?
@@ -55,18 +61,18 @@ Q: What is the capital city of Kenya?
 > [!NOTE]
 > If you are offline, the cloud provider prints `not available, skipping` - the loop keeps going.
 
-## Step 3 - Write your own provider
+## Step 3 - Understand the result
 
-The last cell has a `MyProvider` skeleton for any OpenAI-compatible server (for example **LM Studio** on `http://localhost:1234/v1`). Complete `is_available()`.
+Each provider returns the same `ChatResult`, including the answer, model name, latency, token counts, and estimated KES cost. Local Phi is free per request and can work offline; Foundry is useful for harder prompts.
 
 ## Checkpoint
 
-- [ ] You can explain what `Provider.chat()` does for every provider
-- [ ] You ran the same questions through local and cloud models
+- [ ] Phi and Foundry answered through the same provider interface
+- [ ] You compared latency, model name, and cost
 
 ## Exercises
 
-**1.** Implement `MyProvider.is_available()` so it returns `True` only when the server is running.
+**Optional:** Implement a provider for another OpenAI-compatible local server.
 
 <details>
 <summary>Solution</summary>
@@ -94,11 +100,11 @@ class MyProvider(Provider):
             return False
 ```
 
-`urllib.error.URLError` is a subclass of `OSError`, so one `except` covers "server not running" and timeouts.
+This is optional; it is not required for the workshop path.
 
 </details>
 
-**2.** Why do local providers return `0.0` from `cost_kes()`? When might that be wrong?
+**1.** Why do local providers return `0.0` from `cost_kes()`? When might that be wrong?
 
 <details>
 <summary>Answer</summary>
