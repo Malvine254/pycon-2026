@@ -38,7 +38,7 @@ flowchart LR
 | 2:55 | Wrap-up | | |
 
 Each module is a Python file split into cells with `# %%`. In VS Code, click **Run Cell** above each cell
-(needs the Python and Jupyter extensions), or run the whole file with `python workshop/<file>.py`.
+(needs the Python and Jupyter extensions), or run the whole file with `python workshop/<file>.py` after activating `.venv`.
 
 ## 1. Prerequisites (do this before the workshop)
 
@@ -74,6 +74,8 @@ python -m venv .venv
 pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
+
+After activation, your Windows prompt should begin with `(.venv) PS`. Keep using that terminal for all later Python, `pip`, and `pytest` commands.
 
 macOS / Linux:
 
