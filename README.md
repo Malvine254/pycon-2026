@@ -31,7 +31,7 @@ flowchart LR
 | 1:40 | Privacy guard for Kenyan personal data | [workshop/05_privacy_guard.py](workshop/05_privacy_guard.py) |
 | 2:00 | Local RAG over your own documents | [workshop/06_local_rag.py](workshop/06_local_rag.py) |
 | 2:25 | Agent with tools (stretch goal) | [workshop/07_agent_tools.py](workshop/07_agent_tools.py) |
-| 2:45 | Msaidizi chat UI | [app/streamlit_app.py](app/streamlit_app.py) |
+| 2:45 | Msaidizi agent web app | [app/server.py](app/server.py) |
 | 2:55 | Wrap-up | |
 
 Each module is a Python file split into cells with `# %%`. In VS Code, click **Run Cell** above each cell
@@ -66,7 +66,7 @@ git clone <repo-url> pycord
 cd pycord
 python -m venv .venv
 .venv\Scripts\Activate.ps1
-pip install -e ".[ui,dev]"
+pip install -e ".[ui,web,dev]"
 Copy-Item .env.example .env
 ```
 
@@ -77,7 +77,7 @@ git clone <repo-url> pycord
 cd pycord
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -e ".[ui,dev]"
+pip install -e ".[ui,web,dev]"
 cp .env.example .env
 ```
 
@@ -109,7 +109,19 @@ pytest
 
 All lines should show `[OK]`. If the cloud check fails you can still do modules 2, 5 and 6 offline.
 
-## 6. Run the chat UI
+## 6. Run the apps
+
+**Msaidizi agent web app** (chat with the tool-calling agent):
+
+```bash
+python app/server.py
+```
+
+Open http://127.0.0.1:8000. Choose **Auto**, **Local** or **Cloud** at the top right. Each answer shows the tools
+the agent called (click to see arguments and results), the model, the time taken and the cost in KES.
+In Auto mode, messages with personal data are answered by the local model only.
+
+**Streamlit chat** (plain chat and RAG, no tools):
 
 ```bash
 streamlit run app/streamlit_app.py
@@ -129,7 +141,8 @@ src/pycord/
   rag.py               offline BM25 retrieval + RAG prompt
   agent.py             tool-calling agent
 workshop/              modules 00-07
-app/streamlit_app.py   chat UI
+app/server.py          agent web app (FastAPI + app/static/index.html)
+app/streamlit_app.py   Streamlit chat UI
 data/docs/             sample knowledge base (add your own .md files)
 tests/                 pytest suite (no network needed)
 ```
@@ -148,8 +161,8 @@ tests/                 pytest suite (no network needed)
 
 ## Notes for facilitators
 
-- Bring USB drives with Python wheels (`pip download -d wheels ".[ui,dev]"`) and the model files,
-  so attendees can install with `pip install --no-index --find-links wheels -e ".[ui,dev]"`.
+- Bring USB drives with Python wheels (`pip download -d wheels ".[ui,web,dev]"`) and the model files,
+  so attendees can install with `pip install --no-index --find-links wheels -e ".[ui,web,dev]"`.
 - A shared Foundry endpoint and key for the room can be handed out instead of personal Azure accounts.
   Rotate the key after the workshop.
 - The documents in `data/docs` are sample data for the workshop, not official advice.

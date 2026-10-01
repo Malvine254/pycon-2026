@@ -2,11 +2,30 @@
 from __future__ import annotations
 
 import json
+import time
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from typing import Any, Callable
 
 from .providers.base import Provider
 from .rag import BM25Retriever
+
+
+@dataclass
+class ToolCall:
+    name: str
+    arguments: str
+    result: str
+
+
+@dataclass
+class AgentReply:
+    text: str
+    provider: str
+    model: str
+    latency_s: float
+    cost_kes: float = 0.0
+    tool_calls: list[ToolCall] = field(default_factory=list)
 
 EAT = timezone(timedelta(hours=3), "EAT")
 
@@ -98,14 +117,40 @@ class Agent:
             return json.dumps({"error": str(exc)})
 
     def run(self, question: str, verbose: bool = True) -> str:
+        reply = self.respond(question)
+        if verbose:
+            for call in reply.tool_calls:
+                print(f"  -> tool {call.name}({call.arguments})")
+        return reply.text
+
+    def respond(self, question: str, history: list[dict[str, str]] | None = None) -> AgentReply:
         messages: list[dict[str, Any]] = [
             {"role": "system", "content": AGENT_SYSTEM_PROMPT},
+            *(history or []),
             {"role": "user", "content": question},
         ]
+        trace: list[ToolCall] = []
+        prompt_tokens = completion_tokens = 0
+        start = time.perf_counter()
+
+        def reply(text: str) -> AgentReply:
+            return AgentReply(
+                text=text,
+                provider=self.provider.name,
+                model=self.provider.model,
+                latency_s=time.perf_counter() - start,
+                cost_kes=self.provider.cost_kes(prompt_tokens, completion_tokens),
+                tool_calls=trace,
+            )
+
         for _ in range(self.max_steps):
-            message = self.provider.complete(messages, tools=self.tools).choices[0].message
+            response = self.provider.complete(messages, tools=self.tools)
+            if response.usage:
+                prompt_tokens += response.usage.prompt_tokens
+                completion_tokens += response.usage.completion_tokens
+            message = response.choices[0].message
             if not message.tool_calls:
-                return message.content or ""
+                return reply(message.content or "")
             messages.append({
                 "role": "assistant",
                 "content": message.content or "",
@@ -115,11 +160,7 @@ class Agent:
                 ],
             })
             for call in message.tool_calls:
-                if verbose:
-                    print(f"  -> tool {call.function.name}({call.function.arguments})")
-                messages.append({
-                    "role": "tool",
-                    "tool_call_id": call.id,
-                    "content": self.call_tool(call.function.name, call.function.arguments),
-                })
-        return "Sorry, I could not finish within the step limit."
+                result = self.call_tool(call.function.name, call.function.arguments)
+                trace.append(ToolCall(call.function.name, call.function.arguments, result))
+                messages.append({"role": "tool", "tool_call_id": call.id, "content": result})
+        return reply("Sorry, I could not finish within the step limit.")
