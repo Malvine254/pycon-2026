@@ -58,6 +58,9 @@ Each lab has a matching file in [`workshop/`](../workshop). The files are split 
 > A `# %%` line marks a runnable cell; it is not something you type into the terminal. If a cloud lab fails because the provided endpoint or key is missing, skip to the local Phi lab and ask a facilitator for the shared settings.
 
 > [!IMPORTANT]
+> Lines printed by a cell, such as `Loaded 6 chunks from ...`, are **output**, not commands. Read them; do not paste them back into PowerShell. Do not share `.env`, API keys, chat history, or private uploaded documents publicly.
+
+> [!IMPORTANT]
 > Run files under `workshop/` for the lab exercises. Files under `src/pycord/` are library modules to read or import, not standalone scripts; do not use **Run Python File** on them.
 
 > [!IMPORTANT]

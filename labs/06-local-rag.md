@@ -40,6 +40,8 @@ flowchart LR
 
 In VS Code, click **Run Cell** above the first `# %%` block. This is Python code; do not paste it into PowerShell:
 
+The cell prints a line such as `Loaded 6 chunks from .../data/docs`. That line is normal output. Do not run or paste it as a PowerShell command.
+
 ```text
 Loaded 6 chunks from .../data/docs
 ```
