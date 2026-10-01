@@ -44,7 +44,7 @@ button { font: inherit; color: inherit; }
 svg { width: 18px; height: 18px; display: block; }
 [data-icon] { display: inline-grid; place-items: center; }
 
-.app { display: grid; grid-template-columns: 284px 1fr; height: 100vh; height: 100dvh; }
+.app { display: grid; grid-template-columns: 320px 1fr; height: 100vh; height: 100dvh; }
 
 /* ---------- Sidebar ---------- */
 .sidebar {
@@ -76,6 +76,8 @@ svg { width: 18px; height: 18px; display: block; }
 }
 .count { background: var(--surface-2); border-radius: 999px; padding: 1px 8px; font-size: 0.68rem; }
 .section-hint { margin: 0; padding: 0 6px; font-size: 0.75rem; color: var(--muted); line-height: 1.45; }
+.model-select { width: 100%; border: 1px solid var(--border); border-radius: 9px; padding: 9px 10px; background: var(--surface-2); color: var(--text); font: inherit; font-size: 0.84rem; cursor: pointer; }
+.model-select:focus { outline: 2px solid var(--green-2); outline-offset: 1px; }
 .history-list { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; max-height: 150px; overflow-y: auto; }
 .history-list button { width: 100%; overflow: hidden; border: 0; border-radius: 8px; padding: 7px 8px; background: transparent; color: var(--text); text-align: left; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
 .history-list button:hover { background: var(--surface-2); }

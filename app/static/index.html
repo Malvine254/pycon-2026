@@ -26,11 +26,11 @@
 
       <section class="section">
         <div class="section-title" data-i18n="routing"></div>
-        <div class="segmented" id="mode" role="group">
-          <button type="button" data-mode="auto" data-i18n="modes.auto"></button>
-          <button type="button" data-mode="local" data-i18n="modes.local"></button>
-          <button type="button" data-mode="cloud" data-i18n="modes.cloud"></button>
-        </div>
+        <select class="model-select" id="mode" aria-label="Model selection">
+          <option value="auto" data-i18n="modes.auto"></option>
+          <option value="local" data-i18n="modes.local"></option>
+          <option value="cloud" data-i18n="modes.cloud"></option>
+        </select>
         <p class="section-hint" id="mode-hint"></p>
       </section>
 

@@ -450,7 +450,7 @@ function renderStatus() {
 
 function setMode(mode) {
   state.mode = mode;
-  document.querySelectorAll("#mode button").forEach((b) => b.classList.toggle("active", b.dataset.mode === mode));
+  $("#mode").value = mode;
   $("#mode-hint").textContent = t(`modeHints.${mode}`);
   $("#mode-pill").textContent = t(`modes.${mode}`);
 }
@@ -482,7 +482,7 @@ document.addEventListener("click", (e) => {
   const button = e.target.closest(".copy-code");
   if (button) copyText(button.closest(".codeblock").querySelector("code").textContent, button);
 });
-document.querySelectorAll("#mode button").forEach((b) => b.addEventListener("click", () => setMode(b.dataset.mode)));
+$("#mode").addEventListener("change", (e) => setMode(e.currentTarget.value));
 document.querySelectorAll("#lang button").forEach((b) => b.addEventListener("click", () => setLang(b.dataset.lang)));
 $("#new-chat").addEventListener("click", newChat);
 $("#save-instructions").addEventListener("click", saveInstructions);
