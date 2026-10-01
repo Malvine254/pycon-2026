@@ -32,6 +32,10 @@ def server(monkeypatch):
     spec = importlib.util.spec_from_file_location("pycord_server", SERVER_PATH)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+    persisted_sources = {chunk.source for chunk in module.retriever.chunks if chunk.source.startswith("upload/")}
+    for source in persisted_sources:
+        module.retriever.remove_source(source)
+    module.uploads.clear()
     module.agents = {"local": FakeAgent("local"), "cloud": FakeAgent("cloud")}
     monkeypatch.setattr(module.local, "is_available", lambda: True)
     monkeypatch.setattr(module.cloud, "is_available", lambda: True)

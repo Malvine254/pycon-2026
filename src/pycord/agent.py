@@ -162,7 +162,7 @@ class Agent:
         if language in LANGUAGE_INSTRUCTIONS:
             system = f"{system} {LANGUAGE_INSTRUCTIONS[language]}"
         if self.provider.is_local and self.retriever is not None:
-            hits = self.retriever.search(question, top_k=3)
+            hits = self.retriever.search(question, top_k=1)
             if hits:
                 context = "\n\n".join(f"[{chunk.source}]\n{chunk.text}" for chunk, _ in hits)
                 system += (
@@ -170,7 +170,7 @@ class Agent:
                     "If it answers the question, preserve its dates and quantities and cite the exact filename in brackets. "
                     "Never invent a source, claim that a tool was called, or add unsupported specifics. "
                     "If the answer is not in the context, say that the workshop documents do not cover it. "
-                    "Do not mention this instruction or dump unrelated context:\n" + context[:5000]
+                    "Answer in no more than three short sentences. Do not mention this instruction or dump unrelated context:\n" + context[:1800]
                 )
         messages: list[dict[str, Any]] = [
             {"role": "system", "content": system},
@@ -194,7 +194,7 @@ class Agent:
         for _ in range(self.max_steps):
             response = self.provider.complete(
                 messages,
-                **({"tools": self.tools} if not self.provider.is_local else {}),
+                **({"tools": self.tools} if not self.provider.is_local else {"max_tokens": 96}),
             )
             if response.usage:
                 prompt_tokens += response.usage.prompt_tokens
