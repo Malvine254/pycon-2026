@@ -69,7 +69,7 @@ git clone https://github.com/Malvine254/pycon-2026.git
 cd pycon-2026
 python -m venv .venv
 .venv\Scripts\Activate.ps1
-pip install -e ".[ui,web,dev]"
+pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
@@ -80,7 +80,7 @@ git clone https://github.com/Malvine254/pycon-2026.git
 cd pycon-2026
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -e ".[ui,web,dev]"
+pip install -r requirements.txt
 cp .env.example .env
 ```
 

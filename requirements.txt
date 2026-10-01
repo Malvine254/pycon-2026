@@ -1,0 +1,26 @@
+# Install everything for the workshop: pip install -r requirements.txt
+# Keep in sync with pyproject.toml.
+
+# Core
+openai>=1.40
+azure-identity>=1.17
+python-dotenv>=1.0
+# v2 is a different in-process API; the workshop uses the service-based v0 API
+foundry-local-sdk>=0.3,<1
+
+# Mela web app
+fastapi>=0.110
+uvicorn>=0.29
+python-multipart>=0.0.9
+pypdf>=4.0
+
+# Streamlit UI
+streamlit>=1.36
+
+# Tests and notebooks
+pytest>=8
+ipykernel>=6
+httpx>=0.27
+
+# The pycord package itself (src/), so `import pycord` works everywhere
+-e .
