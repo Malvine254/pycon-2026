@@ -117,9 +117,13 @@ All lines should show `[OK]`. If the cloud check fails you can still do modules 
 python app/server.py
 ```
 
-Open http://127.0.0.1:8000. Choose **Auto**, **Local** or **Cloud** at the top right. Each answer shows the tools
+Open http://127.0.0.1:8000. Choose **Auto**, **Local** or **Cloud** in the sidebar. Each answer shows the tools
 the agent called (click to see arguments and results), the model, the time taken and the cost in KES.
 In Auto mode, messages with personal data are answered by the local model only.
+
+Upload PDF, Markdown, TXT or CSV files (max 5 MB) with the paperclip, the sidebar, or by dropping them on the page.
+The agent can then search them. Uploads stay in memory only, and any personal data in them is redacted before
+it is sent to a cloud model. Light and dark themes are supported, and the layout works on phones for live demos.
 
 **Streamlit chat** (plain chat and RAG, no tools):
 
@@ -141,7 +145,7 @@ src/pycord/
   rag.py               offline BM25 retrieval + RAG prompt
   agent.py             tool-calling agent
 workshop/              modules 00-07
-app/server.py          agent web app (FastAPI + app/static/index.html)
+app/server.py          agent web app (FastAPI + app/static/)
 app/streamlit_app.py   Streamlit chat UI
 data/docs/             sample knowledge base (add your own .md files)
 tests/                 pytest suite (no network needed)

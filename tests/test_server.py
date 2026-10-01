@@ -66,3 +66,46 @@ def test_rejects_invalid_input(server):
     assert client.post("/api/chat", json={"message": ""}).status_code == 422
     assert client.post("/api/chat", json={"message": "hi", "mode": "other"}).status_code == 422
     assert client.post("/api/chat", json={"message": "x" * 4001}).status_code == 422
+
+
+def test_static_assets_served(server):
+    client = TestClient(server.app)
+    assert client.get("/static/app.js").status_code == 200
+    assert client.get("/static/styles.css").status_code == 200
+
+
+def test_upload_search_and_delete(server):
+    client = TestClient(server.app)
+    files = {"file": ("../notes.md", b"Pycord hackathon prize is a Raspberry Pi. Call 0712345678.", "text/markdown")}
+    doc = client.post("/api/documents", files=files).json()
+    assert doc["name"] == "notes.md"
+    assert doc["pii"] is True
+    assert any(d["name"] == "notes.md" for d in client.get("/api/documents").json())
+    assert server.retriever.search("hackathon prize")[0][0].source == "upload/notes.md"
+
+    assert client.delete(f"/api/documents/{doc['id']}").status_code == 200
+    assert server.retriever.search("hackathon prize") == []
+    assert client.delete(f"/api/documents/{doc['id']}").status_code == 404
+
+
+def test_reupload_replaces_document(server):
+    client = TestClient(server.app)
+    client.post("/api/documents", files={"file": ("a.txt", b"first version", "text/plain")})
+    client.post("/api/documents", files={"file": ("a.txt", b"second version", "text/plain")})
+    uploads = [d for d in client.get("/api/documents").json() if not d["builtin"]]
+    assert len(uploads) == 1
+    texts = [c.text for c in server.retriever.chunks if c.source == "upload/a.txt"]
+    assert texts == ["second version"]
+
+
+def test_upload_rejects_bad_files(server):
+    client = TestClient(server.app)
+    assert client.post("/api/documents", files={"file": ("x.exe", b"MZ", "application/octet-stream")}).status_code == 400
+    big = b"a" * (5 * 1024 * 1024 + 1)
+    assert client.post("/api/documents", files={"file": ("big.txt", big, "text/plain")}).status_code == 400
+
+
+def test_attachments_are_mentioned_to_agent(server):
+    TestClient(server.app).post("/api/chat", json={"message": "Summarise", "attachments": ["notes.md"]})
+    question, _ = server.agents["cloud"].calls[0]
+    assert "notes.md" in question

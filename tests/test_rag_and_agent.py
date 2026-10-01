@@ -1,8 +1,12 @@
 import json
+from types import SimpleNamespace
+
+import pytest
 
 from pycord.agent import Agent, convert_currency
 from pycord.config import DOCS_DIR
-from pycord.rag import BM25Retriever, Chunk, build_rag_messages, load_documents
+from pycord.documents import DocumentError, extract_text, safe_name
+from pycord.rag import BM25Retriever, Chunk, build_rag_messages, chunk_text, load_documents
 
 
 def test_bm25_ranks_relevant_chunk_first():
@@ -40,3 +44,35 @@ def test_agent_rejects_unknown_tool_and_bad_args():
     assert "error" in json.loads(agent.call_tool("delete_everything", "{}"))
     assert "error" in json.loads(agent.call_tool("convert_currency", "not json"))
     assert "search_docs" not in agent.functions
+
+
+@pytest.mark.parametrize(("is_local", "expect_phone"), [(True, True), (False, False)])
+def test_search_docs_redacts_for_cloud(is_local, expect_phone):
+    retriever = BM25Retriever([Chunk("upload/n.md", "Wanjiku contract phone 0712345678")])
+    agent = Agent(SimpleNamespace(is_local=is_local), retriever)
+    text = agent.call_tool("search_docs", '{"query": "Wanjiku contract"}')
+    assert ("0712345678" in text) is expect_phone
+
+
+def test_chunk_text_splits_long_paragraphs():
+    chunks = chunk_text("a.pdf", "word " * 1000, max_chars=200)
+    assert len(chunks) > 1
+    assert all(len(c.text) <= 200 for c in chunks)
+
+
+def test_retriever_add_and_remove():
+    retriever = BM25Retriever([Chunk("a.md", "maize")])
+    retriever.add([Chunk("b.md", "blockchain ledger")])
+    assert retriever.search("blockchain")[0][0].source == "b.md"
+    retriever.remove_source("b.md")
+    assert retriever.search("blockchain") == []
+
+
+def test_safe_name_and_extract_text():
+    assert safe_name("../../etc/evil<x>.md") == "evil_x_.md"
+    assert safe_name("..\\..\\win.txt") == "win.txt"
+    assert extract_text("a.md", b"# Hello") == "# Hello"
+    with pytest.raises(DocumentError):
+        extract_text("a.exe", b"MZ")
+    with pytest.raises(DocumentError):
+        extract_text("a.txt", b"   ")

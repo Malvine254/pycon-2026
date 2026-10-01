@@ -26,46 +26,85 @@ class Chunk:
     text: str
 
 
+def _split_long(paragraph: str, max_chars: int) -> list[str]:
+    pieces: list[str] = []
+    current = ""
+    for word in paragraph.split():
+        if current and len(current) + 1 + len(word) > max_chars:
+            pieces.append(current)
+            current = word
+        else:
+            current = f"{current} {word}" if current else word
+    if current:
+        pieces.append(current)
+    return pieces
+
+
+def chunk_text(source: str, text: str, max_chars: int = 800) -> list[Chunk]:
+    paragraphs: list[str] = []
+    for para in re.split(r"\n\s*\n", text):
+        para = para.strip()
+        if para:
+            paragraphs.extend(_split_long(para, max_chars) if len(para) > max_chars else [para])
+    chunks: list[Chunk] = []
+    buffer = ""
+    for para in paragraphs:
+        if buffer and len(buffer) + len(para) > max_chars:
+            chunks.append(Chunk(source, buffer))
+            buffer = para
+        else:
+            buffer = f"{buffer}\n\n{para}" if buffer else para
+    if buffer:
+        chunks.append(Chunk(source, buffer))
+    return chunks
+
+
 def load_documents(folder: str | Path, max_chars: int = 800) -> list[Chunk]:
     folder = Path(folder)
     chunks: list[Chunk] = []
     for path in sorted([*folder.glob("*.md"), *folder.glob("*.txt")]):
-        paragraphs = [p.strip() for p in re.split(r"\n\s*\n", path.read_text(encoding="utf-8")) if p.strip()]
-        buffer = ""
-        for para in paragraphs:
-            if buffer and len(buffer) + len(para) > max_chars:
-                chunks.append(Chunk(path.name, buffer))
-                buffer = para
-            else:
-                buffer = f"{buffer}\n\n{para}" if buffer else para
-        if buffer:
-            chunks.append(Chunk(path.name, buffer))
+        chunks.extend(chunk_text(path.name, path.read_text(encoding="utf-8"), max_chars))
     return chunks
 
 
 class BM25Retriever:
     def __init__(self, chunks: list[Chunk], k1: float = 1.5, b: float = 0.75) -> None:
-        self.chunks = chunks
         self.k1 = k1
         self.b = b
-        self.term_freqs = [Counter(tokenize(c.text)) for c in chunks]
-        self.lengths = [sum(tf.values()) for tf in self.term_freqs]
-        self.avg_len = sum(self.lengths) / len(self.lengths) if chunks else 0.0
-        doc_freq = Counter(term for tf in self.term_freqs for term in tf)
+        self._build(list(chunks))
+
+    @property
+    def chunks(self) -> list[Chunk]:
+        return self._index[0]
+
+    def _build(self, chunks: list[Chunk]) -> None:
+        term_freqs = [Counter(tokenize(c.text)) for c in chunks]
+        lengths = [sum(tf.values()) for tf in term_freqs]
+        avg_len = sum(lengths) / len(lengths) if chunks else 0.0
+        doc_freq = Counter(term for tf in term_freqs for term in tf)
         n = len(chunks)
-        self.idf = {term: math.log(1 + (n - df + 0.5) / (df + 0.5)) for term, df in doc_freq.items()}
+        idf = {term: math.log(1 + (n - df + 0.5) / (df + 0.5)) for term, df in doc_freq.items()}
+        # Swap the whole index at once so a concurrent search never sees a half-built state.
+        self._index = (chunks, term_freqs, lengths, avg_len, idf)
+
+    def add(self, chunks: list[Chunk]) -> None:
+        self._build([*self.chunks, *chunks])
+
+    def remove_source(self, source: str) -> None:
+        self._build([c for c in self.chunks if c.source != source])
 
     def search(self, query: str, top_k: int = 3) -> list[tuple[Chunk, float]]:
+        chunks, term_freqs, lengths, avg_len, idf = self._index
         terms = tokenize(query)
         scored: list[tuple[Chunk, float]] = []
-        for chunk, tf, length in zip(self.chunks, self.term_freqs, self.lengths):
+        for chunk, tf, length in zip(chunks, term_freqs, lengths):
             score = 0.0
             for term in terms:
                 freq = tf.get(term, 0)
                 if not freq:
                     continue
-                norm = freq + self.k1 * (1 - self.b + self.b * length / self.avg_len)
-                score += self.idf[term] * freq * (self.k1 + 1) / norm
+                norm = freq + self.k1 * (1 - self.b + self.b * length / avg_len)
+                score += idf[term] * freq * (self.k1 + 1) / norm
             if score > 0:
                 scored.append((chunk, score))
         scored.sort(key=lambda item: item[1], reverse=True)

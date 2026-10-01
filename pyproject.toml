@@ -18,7 +18,7 @@ dependencies = [
 
 [project.optional-dependencies]
 ui = ["streamlit>=1.36"]
-web = ["fastapi>=0.110", "uvicorn>=0.29"]
+web = ["fastapi>=0.110", "uvicorn>=0.29", "python-multipart>=0.0.9", "pypdf>=4.0"]
 dev = ["pytest>=8", "ipykernel>=6", "httpx>=0.27"]
 
 [tool.hatch.build.targets.wheel]

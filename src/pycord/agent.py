@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from typing import Any, Callable
 
+from .privacy import redact
 from .providers.base import Provider
 from .rag import BM25Retriever
 
@@ -34,7 +35,9 @@ KES_RATES = {"KES": 1.0, "USD": 129.0, "EUR": 150.0, "UGX": 0.035, "TZS": 0.05}
 
 AGENT_SYSTEM_PROMPT = (
     "You are Msaidizi, a helpful assistant for people in Kenya. "
-    "Use the available tools when they help. Be concise. Reply in the user's language (English or Swahili)."
+    "Use the available tools when they help. Use search_docs for questions about the knowledge base "
+    "or files the user uploaded, and cite the source file names. "
+    "Be concise. Reply in the user's language (English or Swahili)."
 )
 
 TOOLS: list[dict[str, Any]] = [
@@ -66,7 +69,7 @@ TOOLS: list[dict[str, Any]] = [
         "type": "function",
         "function": {
             "name": "search_docs",
-            "description": "Search the local knowledge base (M-Pesa safety, maize farming, workshop FAQ).",
+            "description": "Search the knowledge base: sample docs (M-Pesa safety, maize farming, workshop FAQ) and files uploaded by the user.",
             "parameters": {
                 "type": "object",
                 "properties": {"query": {"type": "string"}},
@@ -105,7 +108,9 @@ class Agent:
 
     def _search_docs(self, query: str) -> dict[str, Any]:
         hits = self.retriever.search(query, top_k=3) if self.retriever else []
-        return {"results": [{"source": c.source, "text": c.text} for c, _ in hits]}
+        # Uploaded files may contain personal data; never send it to a cloud model.
+        clean = (lambda text: text) if self.provider.is_local else redact
+        return {"results": [{"source": c.source, "text": clean(c.text)} for c, _ in hits]}
 
     def call_tool(self, name: str, arguments: str) -> str:
         func = self.functions.get(name)
