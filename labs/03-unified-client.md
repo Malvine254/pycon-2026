@@ -41,6 +41,15 @@ Before opening the workshop file:
 
 3. Make sure the facilitator-provided cloud values are in `.env`.
 
+To run the complete comparison from an activated Windows PowerShell terminal:
+
+```powershell
+(.venv) PS C:\Users\Home\Downloads\pycon-2026> $env:PYTHONPATH = "src"
+(.venv) PS C:\Users\Home\Downloads\pycon-2026> python workshop/03_unified_client.py
+```
+
+The `(.venv) PS` text is your prompt, not something to type. In VS Code, the easier option is to open the workshop file and click **Run Cell** from top to bottom.
+
 Open [`base.py`](../src/pycord/providers/base.py) and notice that every provider exposes the same `ask()`, `chat()`, `is_available()`, and `ChatResult` interface.
 
 > [!TIP]
