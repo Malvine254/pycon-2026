@@ -53,13 +53,14 @@ Each module is a Python file split into cells with `# %%`. In VS Code, click **R
 
 Download the local model **at home**, not on the conference Wi-Fi:
 
-```bash
-# Foundry Local
+```powershell
+# Foundry Local + Phi
+foundry server start
 foundry model download phi-3.5-mini # first run downloads about 2.2 GB
-foundry run phi-3.5-mini            # type /exit after it answers
-# or Ollama
-ollama pull qwen2.5:1.5b
+foundry model load phi-3.5-mini
 ```
+
+Optional Ollama path: `ollama pull qwen2.5:1.5b`, then set `LOCAL_RUNTIME=ollama`.
 
 ## 2. Get the project and install it
 
@@ -97,13 +98,22 @@ cp .env.example .env
    - **Recommended:** install the Azure CLI, run `az login`, and make sure your account has the
      **Cognitive Services OpenAI User** role on the Foundry resource. Leave `FOUNDRY_API_KEY` empty.
 
+  The cloud settings should look like this (keep the real key only in `.env`):
+
+  ```ini
+  FOUNDRY_ENDPOINT=https://<your-resource>.openai.azure.com
+  FOUNDRY_API_KEY=<your-key>
+  FOUNDRY_DEPLOYMENT=gpt-5-mini
+  FOUNDRY_API_VERSION=2025-08-07
+  ```
+
 ## 4. Configure the local model
 
 In `.env`:
 
 | Runtime | Settings |
 |---|---|
-| Foundry Local | `LOCAL_RUNTIME=foundry-local`, `LOCAL_MODEL=phi-3.5-mini` (or `qwen2.5-0.5b` on slower laptops) |
+| Foundry Local | `LOCAL_RUNTIME=foundry-local`, `LOCAL_MODEL=phi-3.5-mini` |
 | Ollama | `LOCAL_RUNTIME=ollama`, `OLLAMA_MODEL=qwen2.5:1.5b` |
 
 ## 5. Check everything works
@@ -120,6 +130,21 @@ All lines should show `[OK]`. If the cloud check fails you can still do modules 
 **Mela agent web app** (chat with the tool-calling agent):
 
 ```bash
+# In another terminal, make sure Phi is loaded:
+foundry server start
+foundry model load phi-3.5-mini
+python app/server.py
+```
+
+For a local-only demo, use two terminals:
+
+```powershell
+# Terminal 1
+foundry server start
+foundry model load phi-3.5-mini
+
+# Terminal 2
+$env:PYTHONPATH = "src"
 python app/server.py
 ```
 
@@ -129,8 +154,9 @@ the agent called (click to see arguments and results), the model, the time taken
 In Auto mode, messages with personal data are answered by the local model only.
 
 Upload PDF, Markdown, TXT or CSV files (max 5 MB) with the paperclip, the sidebar, or by dropping them on the page.
-The agent can then search them. Uploads stay in memory only, and any personal data in them is redacted before
-it is sent to a cloud model. Light and dark themes are supported, and the layout works on phones for live demos.
+The agent can then search them. Uploaded knowledge, saved chats, and owner instructions are stored locally under
+`.mela/` (which is git-ignored), and any personal data in document context is redacted before it is sent to a cloud model.
+Use the sidebar to delete uploaded documents, reopen saved chats, or change Mela's additional instructions. Light and dark themes are supported, and the layout works on phones for live demos.
 
 **Streamlit chat** (plain chat and RAG, no tools):
 
@@ -168,7 +194,7 @@ tests/                 pytest suite (no network needed)
 | `DeploymentNotFound` | `FOUNDRY_DEPLOYMENT` must match the deployment name in the portal |
 | Local runtime not found | Check `foundry --version` / `ollama --version`, then open a new terminal |
 | First local answer is very slow | The model is loading into memory; later calls are faster |
-| Laptop runs out of memory | Use a smaller model: `qwen2.5-0.5b` (Foundry Local) or `qwen2.5:0.5b` (Ollama) |
+| Laptop runs out of memory | Close other apps or use the optional Ollama runtime with `qwen2.5:0.5b` |
 | `ModuleNotFoundError: pycord` | Activate the virtual environment and run `pip install -e .` |
 
 ## Notes for facilitators

@@ -101,10 +101,17 @@ def nairobi_time() -> dict[str, str]:
 
 
 class Agent:
-    def __init__(self, provider: Provider, retriever: BM25Retriever | None = None, max_steps: int = 5) -> None:
+    def __init__(
+        self,
+        provider: Provider,
+        retriever: BM25Retriever | None = None,
+        max_steps: int = 5,
+        instructions: str = "",
+    ) -> None:
         self.provider = provider
         self.retriever = retriever
         self.max_steps = max_steps
+        self.instructions = instructions.strip()
         self.functions: dict[str, Callable[..., Any]] = {
             "convert_currency": convert_currency,
             "nairobi_time": nairobi_time,
@@ -139,6 +146,8 @@ class Agent:
         self, question: str, history: list[dict[str, str]] | None = None, language: str | None = None
     ) -> AgentReply:
         system = AGENT_SYSTEM_PROMPT
+        if self.instructions:
+            system += f"\n\nAdditional instructions from the Mela owner:\n{self.instructions}"
         if language in LANGUAGE_INSTRUCTIONS:
             system = f"{system} {LANGUAGE_INSTRUCTIONS[language]}"
         if self.provider.is_local and self.retriever is not None:

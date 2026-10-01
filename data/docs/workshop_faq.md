@@ -14,13 +14,13 @@ Mela is a general assistant with a small Kenyan workshop knowledge base. It can 
 
 When the local model is selected, BM25 retrieval adds the most relevant document passages to the prompt. When the cloud model is selected, the agent can call the allow-listed `search_docs` tool. Mela should answer from retrieved context when it is relevant and say when it does not have enough information.
 
-Uploaded documents stay in memory. Personal data is kept on the local path and is redacted before document results are sent to a cloud model.
+Uploaded documents, chats, and owner instructions are stored locally under `.mela/`, which is git-ignored. Personal data is kept on the local path and is redacted before document results are sent to a cloud model.
 
 For unrelated questions, Mela should answer briefly without inventing facts. It does not access bank accounts, send messages, make transactions, or replace official agricultural, financial, or medical advice.
 
 ## How is personal data protected?
 
-In Auto mode, Kenyan personal data is routed to the local model when one is available. If no local model is available, Mela refuses the request instead of sending it to the cloud. Uploaded documents stay in memory, and personal data is redacted before cloud document context is used.
+In Auto mode, Kenyan personal data is routed to the local model when one is available. If no local model is available, Mela refuses the request instead of sending it to the cloud. Uploaded documents can be deleted from the Knowledge sidebar, and personal data is redacted before cloud document context is used.
 
 ## What if the Wi-Fi is slow?
 
@@ -28,4 +28,4 @@ Most modules work fully offline once the local model is downloaded. Facilitators
 
 ## Which laptop do I need?
 
-Any laptop with at least 8 GB of RAM can run the small local models used in the workshop, such as phi-3.5-mini or qwen2.5-0.5b. A GPU or NPU is optional.
+Any laptop with at least 8 GB of RAM can run the local Phi model used in this workshop: `phi-3.5-mini`. A GPU or NPU is optional.

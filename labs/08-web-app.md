@@ -27,6 +27,8 @@ flowchart LR
 ## Step 1 - Start the server
 
 ```bash
+foundry server start
+foundry model load phi-3.5-mini
 python app/server.py
 ```
 
@@ -64,7 +66,7 @@ Open **http://127.0.0.1:8000**.
 5. Expand **Imetumia search_docs / Used search_docs** - on the cloud model, the phone number appears as `[PHONE_KE]`.
 
 > [!IMPORTANT]
-> Uploads are kept **in memory only** (never written to disk), limited to PDF / MD / TXT / CSV, 5 MB each, 20 files total. Restarting the server clears them.
+> Uploaded knowledge is stored locally under `.mela/uploads/`, limited to PDF / MD / TXT / CSV, 5 MB each, 20 files total. Delete uploaded documents from the Knowledge sidebar when they are no longer needed. `.mela/` is git-ignored.
 
 > [!TIP]
 > Mela is general-purpose but grounded in the workshop knowledge base: maize farming, M-Pesa safety, workshop FAQ, and documents you upload. Local Phi uses retrieved context without cloud access; cloud Mela can also use the allow-listed tools.
@@ -76,15 +78,16 @@ In **Auto** mode, type: *"Nitumie ukumbusho kwa 0712345678"* (Send me a reminder
 - With a local model: the footer says *data binafsi imegunduliwa - imebaki kwenye kifaa hiki*.
 - Without a local model: Mela **refuses** to send it to the cloud.
 
-The security demonstration is visible in three places: the route footer explains why the model was selected, document results are redacted before cloud calls, and uploaded files are held in memory rather than written to disk.
+The security demonstration is visible in three places: the route footer explains why the model was selected, document results are redacted before cloud calls, and local runtime data stays under the git-ignored `.mela/` folder.
 
 ## Step 5 - Explain the security model
 
 1. Mela detects Kenyan phone numbers, IDs, KRA PINs, M-Pesa codes, and email addresses.
 2. Auto mode keeps messages containing personal data on the local model.
 3. Cloud document context is redacted before it leaves the laptop.
-4. Uploaded files are held in memory only and disappear when the server stops.
-5. Tools are allow-listed; Mela cannot execute arbitrary code or access a user's accounts.
+4. Uploaded files stay on this laptop under `.mela/uploads/` and can be deleted from the Knowledge sidebar.
+5. Chats and owner instructions are stored under `.mela/`; the folder is git-ignored and should not be shared.
+6. Tools are allow-listed; Mela cannot execute arbitrary code or access a user's accounts.
 
 The API is bound to `127.0.0.1` for the workshop. Never share `.env`, API keys, uploaded documents, or screenshots containing personal data.
 

@@ -27,6 +27,7 @@ const ICONS = {
 
 const state = {
   history: [],
+  conversationId: null,
   mode: "auto",
   lang: localStorage.getItem("lang") === "en" ? "en" : "sw",
   busy: false,
@@ -273,6 +274,7 @@ async function send(text) {
       body: JSON.stringify({
         message: text,
         history: state.history.slice(-20),
+        conversation_id: state.conversationId,
         mode: state.mode,
         attachments,
         language: state.lang,
@@ -285,7 +287,9 @@ async function send(text) {
       return;
     }
     addAssistantMessage(data);
+    state.conversationId = data.conversation_id;
     state.history.push({ role: "user", content: text }, { role: "assistant", content: data.reply.slice(0, 8000) });
+    loadHistory();
   } catch {
     thinking.remove();
     addError(t("errors.network"));
@@ -297,6 +301,7 @@ async function send(text) {
 
 function newChat() {
   state.history = [];
+  state.conversationId = null;
   state.pending = [];
   renderPending();
   const hero = heroTemplate.cloneNode(true);
@@ -304,6 +309,37 @@ function newChat() {
   thread.replaceChildren(hero);
   closeSidebar();
   input.focus();
+}
+
+async function loadHistory() {
+  try {
+    const items = await (await fetch("/api/history")).json();
+    $("#history-list").replaceChildren(...items.slice(0, 12).map((item) =>
+      h("li", {}, h("button", { type: "button", title: item.title, onclick: () => openHistory(item.id) }, item.title))));
+  } catch { /* The chat remains usable if persistence is unavailable. */ }
+}
+
+async function openHistory(id) {
+  const record = await (await fetch(`/api/history/${encodeURIComponent(id)}`)).json();
+  state.conversationId = record.id;
+  state.history = record.turns || [];
+  thread.replaceChildren();
+  for (const turn of state.history) {
+    if (turn.role === "user") addUserMessage(turn.content, []);
+    else addAssistantMessage({ reply: turn.content, tools: [], provider: "", model: "", latency_s: 0, cost_kes: 0, route_code: "", route_reason: "" });
+  }
+}
+
+async function loadInstructions() {
+  try { $("#instructions").value = (await (await fetch("/api/instructions")).json()).content || ""; } catch { /* optional */ }
+}
+
+async function saveInstructions() {
+  const content = $("#instructions").value;
+  const res = await fetch("/api/instructions", {
+    method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content }),
+  });
+  toast(res.ok ? "Instructions saved" : "Could not save instructions", res.ok ? "success" : "error");
 }
 
 /* ---------- Documents ---------- */
@@ -449,6 +485,7 @@ document.addEventListener("click", (e) => {
 document.querySelectorAll("#mode button").forEach((b) => b.addEventListener("click", () => setMode(b.dataset.mode)));
 document.querySelectorAll("#lang button").forEach((b) => b.addEventListener("click", () => setLang(b.dataset.lang)));
 $("#new-chat").addEventListener("click", newChat);
+$("#save-instructions").addEventListener("click", saveInstructions);
 $("#theme-toggle").addEventListener("click", () =>
   applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
 $("#menu-btn").addEventListener("click", () => { $("#sidebar").classList.add("open"); $("#backdrop").classList.add("show"); });
@@ -478,6 +515,8 @@ fillIcons(heroTemplate);
 applyTheme(document.documentElement.dataset.theme);
 setLang(state.lang);
 refreshStatus();
+loadHistory();
+loadInstructions();
 loadDocs();
 setInterval(refreshStatus, 30000);
 input.focus();

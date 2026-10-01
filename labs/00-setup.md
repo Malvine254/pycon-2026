@@ -73,7 +73,7 @@ ollama run qwen2.5:1.5b "Habari?"
 </table>
 
 > [!TIP]
-> Slow laptop? Use a smaller model: `qwen2.5-0.5b` (Foundry Local) or `qwen2.5:0.5b` (Ollama).
+> Foundry Local uses Phi for this workshop. Ollama remains an optional alternative when a smaller model is needed.
 
 ## Step 3 - Get the project and install it
 
@@ -126,7 +126,7 @@ FOUNDRY_DEPLOYMENT=gpt-5-mini
 
 LOCAL_RUNTIME=foundry-local      # or: ollama
 LOCAL_MODEL=phi-3.5-mini
-OLLAMA_MODEL=qwen2.5:1.5b
+OLLAMA_MODEL=qwen2.5:1.5b       # optional Ollama path
 ```
 
 Now choose how to sign in to Foundry:

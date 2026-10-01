@@ -138,7 +138,7 @@ local_agent = Agent(get_local_provider(settings), retriever=agent.retriever)
 print(local_agent.run("How much is 100 USD in KES?"))
 ```
 
-Small models are often unreliable at tool calling. Models such as `qwen2.5` handle it better than others - this is a good reason to route tool-heavy tasks to the cloud.
+The local Phi path is intentionally text-only for reliability. Tool-heavy tasks are routed to the cloud model, where the allow-listed tools are supported.
 
 </details>
 

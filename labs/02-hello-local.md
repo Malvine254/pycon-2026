@@ -123,7 +123,7 @@ print("Model id:", local.model)
 <details>
 <summary>Solution</summary>
 
-Foundry Local: set `LOCAL_MODEL=qwen2.5-0.5b` in `.env` (first run downloads it).
+Foundry Local: keep `LOCAL_MODEL=phi-3.5-mini` and load Phi with `foundry model load phi-3.5-mini`.
 Ollama: `ollama pull qwen2.5:0.5b` and set `OLLAMA_MODEL=qwen2.5:0.5b`.
 
 Restart the Python cell / kernel so the new settings are loaded. Smaller models are faster and lighter on memory, but weaker at reasoning and Kiswahili.

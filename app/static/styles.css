@@ -76,6 +76,10 @@ svg { width: 18px; height: 18px; display: block; }
 }
 .count { background: var(--surface-2); border-radius: 999px; padding: 1px 8px; font-size: 0.68rem; }
 .section-hint { margin: 0; padding: 0 6px; font-size: 0.75rem; color: var(--muted); line-height: 1.45; }
+.history-list { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; max-height: 150px; overflow-y: auto; }
+.history-list button { width: 100%; overflow: hidden; border: 0; border-radius: 8px; padding: 7px 8px; background: transparent; color: var(--text); text-align: left; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+.history-list button:hover { background: var(--surface-2); }
+.instructions-panel textarea { width: 100%; resize: vertical; border: 1px solid var(--border); border-radius: 8px; padding: 8px; background: var(--surface-2); color: var(--text); font: inherit; font-size: 0.78rem; }
 
 .segmented {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
