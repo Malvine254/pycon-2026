@@ -47,7 +47,7 @@ Each lab has a matching file in [`workshop/`](../workshop). The files are split 
 - **Terminal:** activate the environment, set the source path, then run the file from the project folder:
 
     ```powershell
-    .venv\Scripts\Activate.ps1
+    .\.venv\Scripts\Activate.ps1
     $env:PYTHONPATH = "src"
     python workshop/01_hello_cloud.py
     ```
@@ -58,7 +58,7 @@ Each lab has a matching file in [`workshop/`](../workshop). The files are split 
 > A `# %%` line marks a runnable cell; it is not something you type into the terminal. If a cloud lab fails because the provided endpoint or key is missing, skip to the local Phi lab and ask a facilitator for the shared settings.
 
 > [!IMPORTANT]
-> Always activate the virtual environment first: `.venv\Scripts\Activate.ps1` (Windows) or `source .venv/bin/activate` (macOS / Linux).
+> Always activate the virtual environment first: `.\.venv\Scripts\Activate.ps1` (Windows) or `source .venv/bin/activate` (macOS / Linux). The leading `.` tells PowerShell to run the script in the current shell.
 
 ## Conventions used in the labs
 

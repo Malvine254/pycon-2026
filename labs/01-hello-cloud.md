@@ -26,7 +26,7 @@ sequenceDiagram
 Open [`workshop/01_hello_cloud.py`](../workshop/01_hello_cloud.py). In VS Code, click **Run Cell** above the first `# %%` block. If you prefer the terminal, run:
 
 ```powershell
-.venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 $env:PYTHONPATH = "src"
 python workshop/01_hello_cloud.py
 ```

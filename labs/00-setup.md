@@ -68,7 +68,7 @@ Confirm the model is loaded before starting the Python app.
 git clone https://github.com/Malvine254/pycon-2026.git
 cd pycon-2026
 python -m venv .venv
-.venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
