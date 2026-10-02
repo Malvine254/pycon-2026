@@ -32,12 +32,13 @@ classDiagram
 Before opening the workshop file:
 
 1. Activate `.venv` using the instructions in the [lab guide](README.md).
-2. Start Foundry Local and load Phi:
+2. Make sure Phi is running ([how](00-setup.md#step-2---install-and-start-the-local-model)):
 
-    ```powershell
-    foundry server start
-    foundry model load phi-3.5-mini
-    ```
+    | New CLI | Legacy CLI |
+    |---|---|
+    | `foundry server start` then `foundry model load phi-3.5-mini` | `foundry service start` (the lab loads Phi) |
+
+    No Phi yet? The comparison skips the local model and keeps going.
 
 3. Make sure the facilitator-provided cloud values are in `.env`.
 

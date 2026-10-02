@@ -15,12 +15,13 @@ Build the "brain" of the hybrid system: a router that decides, **per request**, 
 
 ## Before you start
 
-In a terminal with `(.venv)` active, make sure local Phi is loaded:
+In a terminal with `(.venv)` active, make sure Phi is running ([how](00-setup.md#step-2---install-and-start-the-local-model)):
 
-```powershell
-foundry server start
-foundry model load phi-3.5-mini
-```
+| New CLI | Legacy CLI |
+|---|---|
+| `foundry server start` then `foundry model load phi-3.5-mini` | `foundry service start` (the lab loads Phi) |
+
+No Phi yet? The lab still runs - see the tip in Step 1 for what you will see.
 
 The cloud route also needs the facilitator-provided Azure OpenAI values in `.env`. If they are unavailable, the offline and local examples still work.
 

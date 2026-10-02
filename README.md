@@ -51,18 +51,21 @@ Each module is a Python file split into cells with `# %%`. In VS Code, click **R
     - macOS: `brew tap microsoft/foundrylocal` then `brew install foundrylocal`
   - **Ollama** (Windows / macOS / Linux) - from ollama.com
 
-Download the local model **at home**, not on the conference Wi-Fi:
+Download the local model **at home**, not on the conference Wi-Fi. Foundry Local has a new CLI (`foundry server`)
+and a legacy CLI (`foundry service`) - run `foundry --help` to see which you have:
 
-```powershell
-# Foundry Local + Phi
-foundry server start
-foundry model download phi-3.5-mini # first run downloads about 2.2 GB
-foundry model load phi-3.5-mini
-```
+| Step | New CLI | Legacy CLI |
+|---|---|---|
+| Start the service | `foundry server start` | `foundry service start` |
+| Download Phi (~2.2 GB, once) | `foundry model download phi-3.5-mini` | `foundry model download phi-3.5-mini` |
+| Load Phi | `foundry model load phi-3.5-mini` | Not needed - the code loads it |
+| Find the port | `foundry server status` → `Web URLs` | `foundry service status` → `running on http://127.0.0.1:<port>` |
+| Check Phi is loaded | `(Invoke-RestMethod "http://127.0.0.1:<port>/v1/models").data.id` | same |
 
-Optional Ollama path: `ollama pull qwen2.5:1.5b`, then set `LOCAL_RUNTIME=ollama`.
+Full step-by-step guide with troubleshooting: [Lab 00, Step 2](labs/00-setup.md#step-2---install-and-start-the-local-model).
+The local model is optional: without it, the labs and the app fall back to the cloud model.
 
-If `foundry --help` shows `service` instead of `server`, you have the legacy CLI. Use `foundry service status` and run `foundry model run phi-3.5-mini` in a separate terminal before starting the app.
+Optional Ollama path: `ollama pull qwen2.5:1.5b`, then set `LOCAL_RUNTIME=ollama` (always port 11434).
 
 ## 2. Get the project and install it
 

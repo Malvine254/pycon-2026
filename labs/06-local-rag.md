@@ -12,12 +12,13 @@ Make the model answer from **your documents** instead of its memory, with citati
 
 ## Before you start
 
-In a terminal with `(.venv)` active, load local Phi:
+In a terminal with `(.venv)` active, make sure Phi is running ([how](00-setup.md#step-2---install-and-start-the-local-model)):
 
-```powershell
-foundry server start
-foundry model load phi-3.5-mini
-```
+| New CLI | Legacy CLI |
+|---|---|
+| `foundry server start` then `foundry model load phi-3.5-mini` | `foundry service start` (the lab loads Phi) |
+
+No Phi yet? Search still works offline, and the answers come from the cloud model instead.
 
 This lab does not need the FastAPI app. It searches the sample documents directly from the Python cell.
 

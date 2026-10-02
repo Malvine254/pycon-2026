@@ -15,22 +15,18 @@ Run the **same prompt** as Lab 01 on a model that lives on your laptop - no inte
 
 ---
 
-## Step 1 - Choose and start a local runtime
+## Step 1 - Make sure Phi is running
 
-### Option A: Foundry Local
+If you completed [Lab 00, Step 2](00-setup.md#step-2---install-and-start-the-local-model), you are ready. Quick reminder:
 
-Use this on Windows or macOS:
+| | New CLI (`foundry server`) | Legacy CLI (`foundry service`) |
+|---|---|---|
+| Start | `foundry server start` | `foundry service start` |
+| Load Phi | `foundry model load phi-3.5-mini` | Not needed - the lab loads it |
+| Find the port | `foundry server status` → `Web URLs` | `foundry service status` → `running on http://127.0.0.1:<port>` |
+| Check Phi is loaded | `(Invoke-RestMethod "http://127.0.0.1:<port>/v1/models").data.id` | same |
 
-```powershell
-foundry server status
-foundry model list
-foundry model download phi-3.5-mini
-foundry model load phi-3.5-mini
-```
-
-Keep the Foundry Local server running while you complete this lab.
-
-If your CLI lists `service` instead of `server`, use `foundry service status` and run `foundry model run phi-3.5-mini` in a separate terminal.
+Keep the service running while you complete this lab.
 
 In `.env`:
 
@@ -39,22 +35,7 @@ LOCAL_RUNTIME=foundry-local
 LOCAL_MODEL=phi-3.5-mini
 ```
 
-### Optional alternative: Ollama
-
-Use this on Windows, macOS, or Linux:
-
-```bash
-ollama pull qwen2.5:1.5b
-ollama list
-ollama run qwen2.5:1.5b "Habari?"
-```
-
-In `.env`:
-
-```ini
-LOCAL_RUNTIME=ollama
-OLLAMA_MODEL=qwen2.5:1.5b
-```
+Using Ollama instead? See the Ollama box in [Lab 00, Step 2](00-setup.md#step-2---install-and-start-the-local-model).
 
 Restart the terminal, Python process, or notebook kernel after changing `.env`.
 
@@ -154,7 +135,7 @@ To switch Foundry Local models:
 
 	```powershell
 	foundry model download phi-3.5-mini
-	foundry model load phi-3.5-mini
+	foundry model load phi-3.5-mini   # new CLI only; the legacy CLI loads it for you
 	```
 
 4. Restart the Python cell or the app. The provider checks that the selected alias is actually loaded; if it is missing, the lab skips the local provider instead of crashing.

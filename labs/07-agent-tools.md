@@ -14,12 +14,11 @@ Turn the model into an **agent**: it decides which Python function to call, we r
 
 This lab uses the facilitator-provided cloud settings because reliable tool calling is demonstrated with `gpt-5-mini`. Keep `(.venv)` active and confirm the cloud values are in `.env`.
 
-If you also want to run the local text-only comparison, use:
+If you also want to run the local text-only comparison, make sure Phi is running ([how](00-setup.md#step-2---install-and-start-the-local-model)):
 
-```powershell
-foundry server start
-foundry model load phi-3.5-mini
-```
+| New CLI | Legacy CLI |
+|---|---|
+| `foundry server start` then `foundry model load phi-3.5-mini` | `foundry service start` (the lab loads Phi) |
 
 Local Phi can answer text questions, but this project intentionally routes tool-heavy requests to the cloud path.
 

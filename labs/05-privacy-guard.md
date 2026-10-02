@@ -12,12 +12,13 @@ Detect Kenyan personal data, keep it on the device, and learn two privacy patter
 
 ## Before you start
 
-In a terminal with `(.venv)` active, load local Phi:
+In a terminal with `(.venv)` active, make sure Phi is running ([how](00-setup.md#step-2---install-and-start-the-local-model)):
 
-```powershell
-foundry server start
-foundry model load phi-3.5-mini
-```
+| New CLI | Legacy CLI |
+|---|---|
+| `foundry server start` then `foundry model load phi-3.5-mini` | `foundry service start` (the lab loads Phi) |
+
+No Phi yet? Detection and redaction still work; the "keep it local" step prints a refusal instead.
 
 No FastAPI server is needed for this lab. The cloud comparison is optional and uses the facilitator-provided `.env` settings.
 
