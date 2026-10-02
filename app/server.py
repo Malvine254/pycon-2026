@@ -93,6 +93,10 @@ class InstructionsRequest(BaseModel):
 
 
 def choose_target(mode: str, user_text: str) -> tuple[str, str]:
+    if mode == "local" and not local.is_available():
+        raise api_error(503, "local_unavailable", "No local model is running. Start Foundry Local or Ollama, or use Cloud mode.")
+    if mode == "cloud" and not cloud.is_available():
+        raise api_error(503, "cloud_unavailable", "The cloud model is unreachable. Check FOUNDRY_ENDPOINT and your connection.")
     if mode != "auto":
         return mode, f"manual_{mode}"
     if contains_pii(user_text):
@@ -100,6 +104,8 @@ def choose_target(mode: str, user_text: str) -> tuple[str, str]:
             raise api_error(422, "pii_no_local", "Personal data detected and no local model is available - not sending it to the cloud.")
         return "local", "pii"
     if not cloud.is_available():
+        if not local.is_available():
+            raise api_error(503, "no_model", "No model is available: the cloud is unreachable and no local model is running.")
         return "local", "offline"
     return "cloud", "cloud_tools"
 

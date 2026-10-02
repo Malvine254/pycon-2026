@@ -28,14 +28,18 @@ class FakeAgent:
 
 
 @pytest.fixture
-def server(monkeypatch):
+def server(monkeypatch, tmp_path):
+    from pycord import storage
+
+    # Keep test uploads and chats out of the real .mela folder.
+    monkeypatch.setattr(storage, "RUNTIME_DIR", tmp_path)
+    monkeypatch.setattr(storage, "UPLOADS_DIR", tmp_path / "uploads")
+    monkeypatch.setattr(storage, "HISTORY_FILE", tmp_path / "history.json")
+    monkeypatch.setattr(storage, "INSTRUCTIONS_FILE", tmp_path / "instructions.txt")
+
     spec = importlib.util.spec_from_file_location("pycord_server", SERVER_PATH)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    persisted_sources = {chunk.source for chunk in module.retriever.chunks if chunk.source.startswith("upload/")}
-    for source in persisted_sources:
-        module.retriever.remove_source(source)
-    module.uploads.clear()
     module.agents = {"local": FakeAgent("local"), "cloud": FakeAgent("cloud")}
     monkeypatch.setattr(module.local, "is_available", lambda: True)
     monkeypatch.setattr(module.cloud, "is_available", lambda: True)
@@ -66,6 +70,24 @@ def test_pii_without_local_is_refused(server, monkeypatch):
     assert response.status_code == 422
     assert response.json()["detail"]["code"] == "pii_no_local"
     assert server.agents["cloud"].calls == []
+
+
+def test_works_without_local_model(server, monkeypatch):
+    monkeypatch.setattr(server.local, "is_available", lambda: False)
+    client = TestClient(server.app)
+    assert client.post("/api/chat", json={"message": "Habari"}).json()["provider"] == "cloud"
+    response = client.post("/api/chat", json={"message": "Habari", "mode": "local"})
+    assert response.status_code == 503
+    assert response.json()["detail"]["code"] == "local_unavailable"
+    assert server.agents["local"].calls == []
+
+
+def test_no_model_available(server, monkeypatch):
+    monkeypatch.setattr(server.local, "is_available", lambda: False)
+    monkeypatch.setattr(server.cloud, "is_available", lambda: False)
+    response = TestClient(server.app).post("/api/chat", json={"message": "Habari"})
+    assert response.status_code == 503
+    assert response.json()["detail"]["code"] == "no_model"
 
 
 def test_language_and_route_code(server):

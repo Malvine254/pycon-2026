@@ -17,9 +17,18 @@ $env:PYTHONPATH = "src"
 $env:LOCAL_RUNTIME = "foundry-local"
 $env:LOCAL_MODEL = "phi-3.5-mini"
 
-foundry server start
-if ($LASTEXITCODE -ne 0) { throw "Foundry Local server could not start." }
-foundry model load phi-3.5-mini
-if ($LASTEXITCODE -ne 0) { throw "Phi could not be loaded." }
+# The local model is optional: without it Mela runs cloud-only.
+if (Get-Command foundry -ErrorAction SilentlyContinue) {
+    foundry server start
+    if ($LASTEXITCODE -eq 0) {
+        foundry model load $env:LOCAL_MODEL
+        if ($LASTEXITCODE -ne 0) { Write-Warning "Could not load $($env:LOCAL_MODEL). Continuing with the cloud model only." }
+    } else {
+        Write-Warning "Foundry Local server could not start. Continuing with the cloud model only."
+    }
+} else {
+    Write-Warning "Foundry Local is not installed ('foundry' not found). Starting Mela with the cloud model only."
+    Write-Host "  To enable the local model: winget install Microsoft.FoundryLocal" -ForegroundColor DarkGray
+}
 
 & .\.venv\Scripts\python.exe app\server.py
