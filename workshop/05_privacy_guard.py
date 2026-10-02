@@ -27,9 +27,14 @@ from pycord.router import HybridRouter
 
 settings = Settings.from_env()
 router = HybridRouter(get_local_provider(settings), get_cloud_provider(settings))
-result = router.ask(f"Explain this M-Pesa message in simple words: {samples[0]}")
-print(result.summary(), "-", result.route_reason)
-print(result.text)
+try:
+    result = router.ask(f"Explain this M-Pesa message in simple words: {samples[0]}")
+    print(result.summary(), "-", result.route_reason)
+    print(result.text)
+except RuntimeError as exc:
+    # Expected without a local model: personal data is refused rather than sent to the cloud.
+    print("Refused:", exc)
+    print("The privacy guard is working. Pattern 2 below shows how to still use the cloud safely.")
 
 # %% [markdown]
 # ## Pattern 2: redact, then use the cloud

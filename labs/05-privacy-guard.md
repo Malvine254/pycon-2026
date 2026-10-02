@@ -60,6 +60,8 @@ Click **Run Cell** above the second `# %%` block. The router sees personal data 
 
 > [!WARNING]
 > If the local model **fails**, the router raises an error instead of falling back to the cloud. Failing safely is better than leaking data.
+>
+> **No local model installed?** The cell prints `Refused: ...` - that is the guard working, not a bug. Pattern 2 below still works.
 
 ## Step 3 - Pattern 2: redact, then use the cloud
 

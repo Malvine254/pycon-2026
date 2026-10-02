@@ -28,4 +28,8 @@ check(
 check("Cloud reachable", get_cloud_provider(settings).is_available(), "Offline? Modules 2, 5 and 6 still work")
 
 local = get_local_provider(settings)
-check(f"Local runtime ({local.name})", local.is_available(), "Install Foundry Local or Ollama - see README")
+check(
+    f"Local runtime ({local.name})",
+    local.is_available(),
+    "Optional for now - labs fall back to the cloud model. Install Foundry Local or Ollama (labs/00-setup.md)",
+)

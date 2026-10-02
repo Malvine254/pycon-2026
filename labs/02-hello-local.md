@@ -64,15 +64,18 @@ In VS Code, click **Run Cell** above the first `# %%` block. This is Python code
 
 ```python
 from pycord.config import Settings
-from pycord.providers import get_local_provider
+from pycord.labkit import local_or_cloud
 
-local = get_local_provider(Settings.from_env())
-print("Runtime available:", local.is_available())
+model = local_or_cloud(Settings.from_env())
+print(f"Using: {model.name} (local: {model.is_local})")
 ```
 
-Expected: `Runtime available: True`
+Expected: `Using: foundry-local (local: True)`
 
-If it prints `False`, finish Step 1, open a new terminal, and click **Run Cell** on the same Python cell again.
+> [!TIP]
+> **Phi not installed yet?** The cell prints install instructions and continues with the cloud model
+> (`Using: foundry (local: False)`), so you can keep up with the session. Finish Step 1 later, open a new
+> terminal, and click **Run Cell** again to switch to the local model.
 
 ## Step 3 - Ask the same question as Lab 01
 
@@ -92,8 +95,8 @@ Notice **KES 0.0000** - local calls are free.
 Click **Run Cell** above the third `# %%` block. This is Python code; do not paste it into PowerShell:
 
 ```python
-print("Base URL:", local.client.base_url)   # e.g. http://localhost:5273/v1/
-print("Model id:", local.model)
+print("Base URL:", model.client.base_url)   # e.g. http://localhost:5273/v1/
+print("Model id:", model.model)
 ```
 
 ## Step 5 - Run the offline test
@@ -162,7 +165,7 @@ To switch Foundry Local models:
 
 | Problem | Fix |
 |---|---|
-| `Runtime available: False` | Install Foundry Local / Ollama, then open a **new** terminal / restart VS Code |
+| `Using: foundry (local: False)` | The local model is missing - the lab used the cloud instead. Install Foundry Local / Ollama, then open a **new** terminal / restart VS Code |
 | Very slow or laptop freezes | Close other apps, or use a smaller model (Exercise 2) |
 | `ModuleNotFoundError: foundry_local` | Run `pip install -e .` - the project pins a compatible `foundry-local-sdk` |
 | Ollama `connection refused` | Start the Ollama app, or run `ollama serve` |

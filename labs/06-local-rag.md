@@ -60,7 +60,8 @@ The highest score should come from `maize_farming.md`.
 
 ## Step 3 - Ask questions grounded in the documents
 
-Click **Run Cell** above the third `# %%` block. It asks three questions - including one in **Kiswahili**:
+Click **Run Cell** above the third `# %%` block. It asks three questions - including one in **Kiswahili**.
+It uses the local model when installed; otherwise it prints install instructions and uses the cloud model:
 
 ```text
 Q: Nifanye nini nikipokea ujumbe wa ulaghai?

@@ -56,6 +56,17 @@ local | personal data detected - keeping it on this device | My number is 071234
 > [!NOTE]
 > "Complex" is a simple heuristic in `is_complex()`: long prompts, or words like *compare*, *step by step*, *summarize*, *translate*. Simple, explainable rules beat clever ones in a workshop - and often in production too.
 
+> [!TIP]
+> **No local model installed?** You will see this instead - and that is the router doing its job:
+>
+> ```text
+>   cloud | no local runtime found | Habari yako?
+>   cloud | no local runtime found | Compare Django and FastAPI ... step by step.
+> refused | Personal data detected but no local model is available; refusing to send it to the cloud. | My number is ...
+> ```
+>
+> In Step 3 the router reports that no model is available instead of crashing. Install Phi later to see it keep working offline.
+
 ## Step 2 - Route real requests
 
 Click **Run Cell** above the second `# %%` block. Each answer shows **which model** answered and **why**:

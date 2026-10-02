@@ -5,7 +5,7 @@
 
 # %%
 from pycord.config import DOCS_DIR, Settings
-from pycord.providers import get_local_provider
+from pycord.labkit import local_or_cloud
 from pycord.rag import BM25Retriever, build_rag_messages, load_documents
 
 chunks = load_documents(DOCS_DIR)
@@ -17,12 +17,13 @@ for chunk, score in retriever.search("fertiliser for maize at planting"):
     print(f"{score:.2f}  {chunk.source}: {chunk.text[:80]!r}")
 
 # %%
-local = get_local_provider(Settings.from_env())
+# Uses the local model when installed, otherwise the cloud model so you can follow along.
+model = local_or_cloud(Settings.from_env())
 
 
 def ask_docs(question: str) -> None:
     hits = retriever.search(question)
-    result = local.chat(build_rag_messages(question, hits))
+    result = model.chat(build_rag_messages(question, hits))
     print(f"Q: {question}\n{result.text.strip()}\n{result.summary()}\n")
 
 

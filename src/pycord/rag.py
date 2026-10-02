@@ -20,6 +20,11 @@ def tokenize(text: str) -> list[str]:
     return TOKEN_RE.findall(text.lower())
 
 
+def source_terms(source: str) -> list[str]:
+    # Split file names on _ - . / so "My_CV.pdf" matches the query "cv".
+    return re.findall(r"[^\W_]+", source.lower())
+
+
 @dataclass(frozen=True)
 class Chunk:
     source: str
@@ -78,7 +83,7 @@ class BM25Retriever:
         return self._index[0]
 
     def _build(self, chunks: list[Chunk]) -> None:
-        term_freqs = [Counter(tokenize(c.text)) for c in chunks]
+        term_freqs = [Counter(tokenize(c.text) + source_terms(c.source)) for c in chunks]
         lengths = [sum(tf.values()) for tf in term_freqs]
         avg_len = sum(lengths) / len(lengths) if chunks else 0.0
         doc_freq = Counter(term for tf in term_freqs for term in tf)

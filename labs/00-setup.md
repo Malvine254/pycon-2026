@@ -159,6 +159,9 @@ pytest
 
 > [!NOTE]
 > Cloud lines failing is **okay for now** - Labs 02, 05 and 06 work fully offline.
+>
+> **No local model yet?** Also okay. `[!!] Local runtime` is optional: every lab falls back to the cloud
+> model and prints how to install Phi. Install it when the Wi-Fi allows and re-run the lab to see the local version.
 
 ## Troubleshooting
 

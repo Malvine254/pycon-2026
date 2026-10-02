@@ -143,7 +143,32 @@ def test_upload_rejects_bad_files(server):
     assert client.post("/api/documents", files={"file": ("big.txt", big, "text/plain")}).status_code == 400
 
 
-def test_attachments_are_mentioned_to_agent(server):
-    TestClient(server.app).post("/api/chat", json={"message": "Summarise", "attachments": ["notes.md"]})
+def test_attached_file_content_is_sent_to_agent(server):
+    client = TestClient(server.app)
+    cv = b"Wanjiku Kamau. Python developer at Safaricom. Phone 0712345678."
+    client.post("/api/documents", files={"file": ("Wanjiku_CV.txt", cv, "text/plain")})
+    client.post("/api/chat", json={"message": "Summarise my CV", "attachments": ["Wanjiku_CV.txt"]})
     question, _ = server.agents["cloud"].calls[0]
-    assert "notes.md" in question
+    assert "Python developer at Safaricom" in question
+    assert "0712345678" not in question  # redacted for the cloud model
+    assert "[PHONE_KE]" in question
+
+
+def test_attached_file_unredacted_for_local_model(server):
+    client = TestClient(server.app)
+    client.post("/api/documents", files={"file": ("cv.txt", b"Call me on 0712345678", "text/plain")})
+    client.post("/api/chat", json={"message": "Summarise", "attachments": ["cv.txt"], "mode": "local"})
+    question, _ = server.agents["local"].calls[0]
+    assert "0712345678" in question
+
+
+def test_unknown_attachment_is_ignored(server):
+    TestClient(server.app).post("/api/chat", json={"message": "Summarise", "attachments": ["missing.md"]})
+    question, _ = server.agents["cloud"].calls[0]
+    assert question == "Summarise"
+
+
+def test_search_matches_file_names(server):
+    client = TestClient(server.app)
+    client.post("/api/documents", files={"file": ("Malvine_Owuor_CV.txt", b"Experienced Azure engineer.", "text/plain")})
+    assert server.retriever.search("cv")[0][0].source == "upload/Malvine_Owuor_CV.txt"
