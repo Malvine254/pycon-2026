@@ -20,8 +20,14 @@ class FoundryLocalProvider(Provider):
     def __init__(self, settings: Settings) -> None:
         super().__init__(settings.local_model)
         self.alias = settings.local_model
+        self.configured_endpoint = settings.local_endpoint.rstrip("/").removesuffix("/v1")
 
-    def _build_client(self) -> OpenAI:
+    def endpoint(self) -> str | None:
+        """Base URL of Foundry Local, e.g. http://127.0.0.1:5273 (LOCAL_ENDPOINT wins over auto-detect)."""
+        if self.configured_endpoint:
+            return self.configured_endpoint
+        if shutil.which("foundry") is None:
+            return None
         try:
             status = subprocess.run(
                 ["foundry", "server", "status"],
@@ -30,17 +36,20 @@ class FoundryLocalProvider(Provider):
                 text=True,
                 timeout=10,
             ).stdout
-        except (OSError, subprocess.SubprocessError) as exc:
+        except (OSError, subprocess.SubprocessError):
+            return None
+        match = re.search(r"Web URLs\s+(https?://\S+)", status)
+        return match.group(1).rstrip("/") if match else None
+
+    def _build_client(self) -> OpenAI:
+        base_url = self.endpoint()
+        if base_url is None:
             raise RuntimeError(
                 f"Foundry Local is not running. Run `foundry server start`, then `foundry model load {self.alias}` "
                 "(see labs/00-setup.md, Step 2)."
-            ) from exc
+            )
 
-        match = re.search(r"Web URLs\s+(https?://\S+)", status)
-        if not match:
-            raise RuntimeError("Foundry Local server endpoint was not found in `foundry server status`.")
-
-        client = OpenAI(base_url=f"{match.group(1)}/v1", api_key="foundry-local")
+        client = OpenAI(base_url=f"{base_url}/v1", api_key="foundry-local")
         models = list(client.models.list().data)
         model = next((item for item in models if self.alias.lower() in item.id.lower()), None)
         if model is None:
@@ -49,21 +58,12 @@ class FoundryLocalProvider(Provider):
         return client
 
     def is_available(self) -> bool:
-        if shutil.which("foundry") is None:
+        base_url = self.endpoint()
+        if base_url is None:
             return False
         try:
-            status = subprocess.run(
-                ["foundry", "server", "status"],
-                capture_output=True,
-                check=True,
-                text=True,
-                timeout=5,
-            ).stdout
-            match = re.search(r"Web URLs\s+(https?://\S+)", status)
-            if "Ready" not in status or not match:
-                return False
-            with urllib.request.urlopen(f"{match.group(1)}/v1/models", timeout=2) as response:
+            with urllib.request.urlopen(f"{base_url}/v1/models", timeout=2) as response:
                 models = json.loads(response.read()).get("data", [])
             return any(self.alias.lower() in str(model.get("id", "")).lower() for model in models)
-        except (OSError, ValueError, json.JSONDecodeError, subprocess.SubprocessError):
+        except (OSError, ValueError, json.JSONDecodeError):
             return False

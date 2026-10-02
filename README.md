@@ -92,11 +92,17 @@ Never commit `.env` or share the key in chat - `.env` is git-ignored.
 
 ## 4. Configure the local model
 
-The default in `.env` already matches the workshop:
+The defaults in `.env` already match the workshop:
 
 ```ini
 LOCAL_MODEL=phi-3.5-mini
+LOCAL_ENDPOINT=
 ```
+
+**Where is Phi running?** You don't need to put an address in `.env`. Foundry Local picks a port when the server
+starts (it can change after a restart), so the code runs `foundry server status` and reads the current `Web URLs`
+automatically. The detected address is printed by `python workshop/00_setup_check.py` and shown in the Mela sidebar.
+Only if auto-detection fails, set it yourself, e.g. `LOCAL_ENDPOINT=http://127.0.0.1:5273`.
 
 Installing Foundry Local, starting the server, loading Phi and checking its port are covered step by step in
 **[Lab 00, Step 2](labs/00-setup.md#step-2---install-and-start-the-local-model)**.

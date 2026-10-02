@@ -443,7 +443,7 @@ function renderStatus() {
     $(`#${key}-name`).textContent = info.model;
     sub.textContent =
       key === "local"
-        ? `${info.name} · ${t(info.available ? "status.ready" : "status.notFound")}`
+        ? `${info.name} · ${t(info.available ? "status.ready" : "status.notFound")}${info.endpoint ? ` · ${info.endpoint}` : ""}`
         : `Microsoft Foundry · ${t(info.available ? "status.online" : "status.offline")}`;
   }
 }

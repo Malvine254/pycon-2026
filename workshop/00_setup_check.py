@@ -28,6 +28,8 @@ check(
 check("Cloud reachable", get_cloud_provider(settings).is_available(), "Offline? Modules 2, 5 and 6 still work")
 
 local = get_local_provider(settings)
+endpoint = local.endpoint()
+print(f"     Phi endpoint: {endpoint or 'not found'}" + (" (from LOCAL_ENDPOINT)" if settings.local_endpoint else " (from `foundry server status`)"))
 check(
     f"Local runtime ({local.name})",
     local.is_available(),

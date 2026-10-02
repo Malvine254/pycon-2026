@@ -95,7 +95,13 @@ foundry server status
 Look for **`Ready`** and **`Web URLs  http://127.0.0.1:<port>`**. Write the port down (for example `5273`).
 
 > [!NOTE]
-> The port is chosen when the server starts and **can change** after a restart. Never hard-code it - the project reads it from `foundry server status` for you.
+> The port is chosen when the server starts and **can change** after a restart. That is why `.env` only has the model
+> name (`LOCAL_MODEL=phi-3.5-mini`) and no address: every time the code connects, it runs `foundry server status`
+> and reads the current `Web URLs` itself. You will see the address it found in the setup check (Step 6) and in
+> the Mela sidebar.
+>
+> If auto-detection ever fails, set the address manually in `.env`, for example `LOCAL_ENDPOINT=http://127.0.0.1:5273`
+> (and update it if the port changes).
 
 <details>
 <summary>Can't see the URL? Find the port from the process list (Windows)</summary>
@@ -202,6 +208,7 @@ FOUNDRY_DEPLOYMENT=gpt-5-mini
 FOUNDRY_API_VERSION=2025-08-07
 
 LOCAL_MODEL=phi-3.5-mini
+LOCAL_ENDPOINT=                  # leave empty - detected from `foundry server status`
 ```
 
 For a personal Azure account, you may instead choose Entra ID:
@@ -231,8 +238,11 @@ Expected output:
 [OK] FOUNDRY_ENDPOINT set
 [OK] Cloud auth configured
 [OK] Cloud reachable
+     Phi endpoint: http://127.0.0.1:5273 (from `foundry server status`)
 [OK] Local runtime (foundry-local)
 ```
+
+The **Phi endpoint** line tells you where Phi is running. Your port may differ from `5273`.
 
 Then run the tests (no internet needed):
 

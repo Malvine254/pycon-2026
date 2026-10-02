@@ -32,6 +32,7 @@ class Settings:
     foundry_deployment: str
     foundry_api_version: str
     local_model: str
+    local_endpoint: str
     usd_to_kes: float
     cloud_input_usd_per_1k: float
     cloud_output_usd_per_1k: float
@@ -46,6 +47,7 @@ class Settings:
             foundry_deployment=os.getenv("FOUNDRY_DEPLOYMENT", "gpt-5-mini"),
             foundry_api_version=os.getenv("FOUNDRY_API_VERSION", "2025-08-07"),
             local_model=os.getenv("LOCAL_MODEL", "phi-3.5-mini"),
+            local_endpoint=os.getenv("LOCAL_ENDPOINT", "").strip(),
             usd_to_kes=_float("USD_TO_KES", 129.0),
             cloud_input_usd_per_1k=_float("CLOUD_INPUT_USD_PER_1K", 0.00015),
             cloud_output_usd_per_1k=_float("CLOUD_OUTPUT_USD_PER_1K", 0.0006),

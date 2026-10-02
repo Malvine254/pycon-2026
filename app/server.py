@@ -141,7 +141,7 @@ def index() -> FileResponse:
 @app.get("/api/status")
 def status() -> dict:
     return {
-        "local": {"name": local.name, "model": local.model, "available": local.is_available()},
+        "local": {"name": local.name, "model": local.model, "available": local.is_available(), "endpoint": local.endpoint()},
         "cloud": {"name": cloud.name, "model": cloud.model, "available": cloud.is_available()},
     }
 
