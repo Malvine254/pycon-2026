@@ -32,6 +32,11 @@ flowchart LR
 
 Open **http://127.0.0.1:8000**.
 
+> [!TIP]
+> If Phi is not downloaded yet, a second window opens and downloads it (~2.2 GB) while Mela already runs on the
+> cloud model. When the download finishes, the sidebar turns Phi green and Auto mode starts using it.
+> On slow Wi-Fi, skip the local model entirely with `.\scripts\start_app.ps1 -SkipLocal`.
+
 The host and port come from `APP_HOST` and `APP_PORT` in `.env`. The default is `127.0.0.1:8000`; change `APP_PORT` if that port is already in use, then run `scripts/start_app.ps1` again.
 
 > [!NOTE]

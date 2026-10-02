@@ -124,8 +124,16 @@ All lines should show `[OK]`. `[!!] Local runtime` is fine for now - the labs fa
 .\scripts\start_app.ps1
 ```
 
-The script starts Foundry Local and loads Phi when they are installed, then starts the web app.
+The script starts the Foundry Local server, then loads Phi **in a separate window** (the first time this downloads
+~2.2 GB). Mela starts straight away with the cloud model and switches to Phi automatically once it is loaded.
 If Foundry Local is missing, it prints a warning and runs Mela with the cloud model only.
+
+To skip Foundry Local completely (for example on slow Wi-Fi):
+
+```powershell
+.\scripts\start_app.ps1 -SkipLocal
+```
+
 On macOS / Linux, start Foundry Local yourself and run `python app/server.py`.
 
 Open http://127.0.0.1:8000. The UI is in **Kiswahili by default** - switch with **SW / EN** in the top bar; Mela also
