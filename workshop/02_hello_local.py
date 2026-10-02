@@ -1,11 +1,10 @@
 # %% [markdown]
-# # Module 2 - Hello, local (Foundry Local / Ollama)
+# # Module 2 - Hello, local (Phi on Foundry Local)
 # The same OpenAI-style API, but the model runs on your laptop: no internet, no cost per request.
 #
 # Before this module, in a terminal:
-# - Foundry Local: `foundry server start`, then `foundry model load phi-3.5-mini`
+# - `foundry server start`, then `foundry model load phi-3.5-mini`
 # - Full steps and port checks: labs/00-setup.md, Step 2
-# - Ollama: `ollama pull qwen2.5:1.5b` and set `LOCAL_RUNTIME=ollama` in `.env`
 #
 # No local model yet? The lab falls back to the cloud model so you can still follow along.
 
@@ -38,4 +37,4 @@ print("Model id:", model.model)
 # ## Exercises
 # 1. Turn off Wi-Fi and run the cell again. It still works!
 # 2. Compare latency and quality with Module 1. When is "good enough" good enough?
-# 3. Try a smaller model (`LOCAL_MODEL=qwen2.5-0.5b`) - faster, but how is the quality?
+# 3. Try another Phi model (`LOCAL_MODEL=phi-4-mini`, then `foundry model load phi-4-mini`) - how do speed and quality change?

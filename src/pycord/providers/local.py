@@ -1,11 +1,10 @@
-"""Local providers: Foundry Local and Ollama (both expose an OpenAI-compatible API)."""
+"""Local provider: Phi running on Foundry Local (OpenAI-compatible API on localhost)."""
 from __future__ import annotations
 
 import json
 import shutil
 import re
 import subprocess
-import urllib.error
 import urllib.request
 
 from openai import OpenAI
@@ -67,24 +66,4 @@ class FoundryLocalProvider(Provider):
                 models = json.loads(response.read()).get("data", [])
             return any(self.alias.lower() in str(model.get("id", "")).lower() for model in models)
         except (OSError, ValueError, json.JSONDecodeError, subprocess.SubprocessError):
-            return False
-
-
-class OllamaProvider(Provider):
-    name = "ollama"
-    is_local = True
-
-    def __init__(self, settings: Settings) -> None:
-        super().__init__(settings.ollama_model)
-        self.base_url = settings.ollama_base_url.rstrip("/")
-
-    def _build_client(self) -> OpenAI:
-        return OpenAI(base_url=self.base_url, api_key="ollama")
-
-    def is_available(self) -> bool:
-        root = self.base_url.removesuffix("/v1")
-        try:
-            with urllib.request.urlopen(f"{root}/api/tags", timeout=1.5) as response:
-                return response.status == 200
-        except (urllib.error.URLError, OSError):
             return False

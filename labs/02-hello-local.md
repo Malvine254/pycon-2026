@@ -30,11 +30,8 @@ Keep the server running while you complete this lab.
 In `.env`:
 
 ```ini
-LOCAL_RUNTIME=foundry-local
 LOCAL_MODEL=phi-3.5-mini
 ```
-
-Using Ollama instead? See the Ollama box in [Lab 00, Step 2](00-setup.md#step-2---install-and-start-the-local-model).
 
 Restart the terminal, Python process, or notebook kernel after changing `.env`.
 
@@ -103,19 +100,22 @@ print("Model id:", model.model)
 | Quality (1-5) | | |
 | Works offline? | | |
 
-**2.** Try a smaller model. Is it faster? Is the quality still "good enough"?
+**2.** Try another Phi model. Is it faster? Is the quality better?
 
 <details>
 <summary>Solution</summary>
 
-Foundry Local: keep `LOCAL_MODEL=phi-3.5-mini` and load Phi with `foundry model load phi-3.5-mini`.
-Ollama: `ollama pull qwen2.5:0.5b` and set `OLLAMA_MODEL=qwen2.5:0.5b`.
+See which Phi models Foundry Local offers, then pick one (for example `phi-4-mini`):
 
-Restart the Python cell / kernel so the new settings are loaded. Smaller models are faster and lighter on memory, but weaker at reasoning and Kiswahili.
+```powershell
+foundry model list
+```
+
+Restart the Python cell / kernel after changing `.env` so the new settings are loaded. Bigger Phi models usually answer better (including in Kiswahili) but need more memory and are slower.
 
 ## Change the local model
 
-To switch Foundry Local models:
+To switch Phi models:
 
 1. Check the available model names:
 
@@ -123,18 +123,17 @@ To switch Foundry Local models:
 	foundry model list
 	```
 
-2. Set the selected alias in `.env`:
+2. Set the selected Phi alias in `.env`:
 
 	```ini
-	LOCAL_RUNTIME=foundry-local
-	LOCAL_MODEL=phi-3.5-mini
+	LOCAL_MODEL=phi-4-mini
 	```
 
 3. Download and load that same alias:
 
 	```powershell
-	foundry model download phi-3.5-mini
-	foundry model load phi-3.5-mini
+	foundry model download phi-4-mini
+	foundry model load phi-4-mini
 	```
 
 4. Restart the Python cell or the app. The provider checks that the selected alias is actually loaded; if it is missing, the lab skips the local provider instead of crashing.
@@ -145,9 +144,8 @@ To switch Foundry Local models:
 
 | Problem | Fix |
 |---|---|
-| `Using: foundry (local: False)` | The local model is missing - the lab used the cloud instead. Install Foundry Local / Ollama, then open a **new** terminal / restart VS Code |
-| Very slow or laptop freezes | Close other apps, or use a smaller model (Exercise 2) |
-| Ollama `connection refused` | Start the Ollama app, or run `ollama serve` |
+| `Using: foundry (local: False)` | Phi is not running - the lab used the cloud instead. Follow [Lab 00, Step 2](00-setup.md#step-2---install-and-start-the-local-model), then open a **new** terminal / restart VS Code |
+| Very slow or laptop freezes | Close other apps (browsers, Teams) and run `foundry model load phi-3.5-mini` again |
 
 ---
 

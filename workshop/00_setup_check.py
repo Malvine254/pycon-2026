@@ -31,5 +31,5 @@ local = get_local_provider(settings)
 check(
     f"Local runtime ({local.name})",
     local.is_available(),
-    "Optional for now - labs fall back to the cloud model. Install Foundry Local or Ollama (labs/00-setup.md)",
+    "Optional for now - labs fall back to the cloud model. Install Foundry Local and load Phi (labs/00-setup.md)",
 )

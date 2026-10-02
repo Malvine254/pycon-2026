@@ -94,7 +94,7 @@ class InstructionsRequest(BaseModel):
 
 def choose_target(mode: str, user_text: str) -> tuple[str, str]:
     if mode == "local" and not local.is_available():
-        raise api_error(503, "local_unavailable", "No local model is running. Start Foundry Local or Ollama, or use Cloud mode.")
+        raise api_error(503, "local_unavailable", "No local model is running. Start Foundry Local and load Phi, or use Cloud mode.")
     if mode == "cloud" and not cloud.is_available():
         raise api_error(503, "cloud_unavailable", "The cloud model is unreachable. Check FOUNDRY_ENDPOINT and your connection.")
     if mode != "auto":

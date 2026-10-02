@@ -14,7 +14,6 @@ foreach ($connection in $connections) {
 }
 
 $env:PYTHONPATH = "src"
-$env:LOCAL_RUNTIME = "foundry-local"
 $env:LOCAL_MODEL = "phi-3.5-mini"
 
 # The local model is optional: without it Mela runs cloud-only.

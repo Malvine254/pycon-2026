@@ -1,7 +1,7 @@
 # %% [markdown]
 # # Module 7 - Agent with tools (stretch goal)
 # The model decides which Python function to call; we run it and send back the result.
-# Tool calling works best with the cloud model. Some local models (e.g. qwen2.5) support it too.
+# Tool calling works best with the cloud model; local Phi answers text-only questions.
 
 # %%
 from pycord.agent import Agent

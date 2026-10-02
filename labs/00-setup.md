@@ -9,7 +9,7 @@
 By the end of this lab you will have:
 
 - [ ] Python 3.10+ and the project installed in a virtual environment
-- [ ] A local model runtime (Foundry Local or Ollama) with a small model downloaded
+- [ ] Foundry Local with the Phi model (`phi-3.5-mini`) downloaded
 - [ ] A Microsoft Foundry project with `gpt-5-mini` deployed
 - [ ] A `.env` file, and a setup check that shows `[OK]`
 
@@ -140,7 +140,7 @@ curl -s http://127.0.0.1:$PORT/v1/models
 | Nothing listening on the port | The server is not running | Repeat 2.2, then 2.5 |
 | Port open, but no `Phi-3.5-mini` in the list | Phi is not loaded | Repeat 2.4 |
 | `unknown command 'server'` | Foundry Local is out of date | Update it (see the warning in 2.1) |
-| Laptop freezes / out of memory | Phi needs ~4 GB free RAM | Close other apps, or use Ollama with `qwen2.5:0.5b` (below) |
+| Laptop freezes / out of memory | Phi needs ~4 GB free RAM | Close other apps (browsers, Teams), then repeat 2.4 |
 
 > [!IMPORTANT]
 > The final check is the setup script in **Step 6**: `[OK] Local runtime (foundry-local)` means the Python code can reach Phi.
@@ -151,26 +151,6 @@ curl -s http://127.0.0.1:$PORT/v1/models
 foundry server start
 foundry model load phi-3.5-mini
 ```
-
-<details>
-<summary>Optional alternative: Ollama (Windows / macOS / Linux)</summary>
-
-Install from ollama.com, then:
-
-```bash
-ollama pull qwen2.5:1.5b
-ollama run qwen2.5:1.5b "Habari?"
-```
-
-Ollama always uses port **11434**. Check it:
-
-```powershell
-(Invoke-RestMethod http://127.0.0.1:11434/api/tags).models.name
-```
-
-In `.env` set `LOCAL_RUNTIME=ollama` and `OLLAMA_MODEL=qwen2.5:1.5b`.
-
-</details>
 
 ## Step 3 - Get the project and install it
 
@@ -221,9 +201,7 @@ FOUNDRY_API_KEY=<provided-key>
 FOUNDRY_DEPLOYMENT=gpt-5-mini
 FOUNDRY_API_VERSION=2025-08-07
 
-LOCAL_RUNTIME=foundry-local      # or: ollama
 LOCAL_MODEL=phi-3.5-mini
-OLLAMA_MODEL=qwen2.5:1.5b       # optional Ollama path
 ```
 
 For a personal Azure account, you may instead choose Entra ID:

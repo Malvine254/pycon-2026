@@ -28,7 +28,7 @@ class ChatResult:
 
 
 class Provider(ABC):
-    """Any OpenAI-compatible chat endpoint: Foundry, Foundry Local, Ollama..."""
+    """Any OpenAI-compatible chat endpoint: Microsoft Foundry or Foundry Local."""
 
     name: str = "provider"
     is_local: bool = False

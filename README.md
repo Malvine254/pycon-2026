@@ -92,10 +92,9 @@ Never commit `.env` or share the key in chat - `.env` is git-ignored.
 
 ## 4. Configure the local model
 
-The defaults in `.env` already match the workshop:
+The default in `.env` already matches the workshop:
 
 ```ini
-LOCAL_RUNTIME=foundry-local
 LOCAL_MODEL=phi-3.5-mini
 ```
 
@@ -149,7 +148,7 @@ how long it took, the tokens used, the cost in KES and why the router chose that
 ```
 src/pycord/
   config.py            settings from .env
-  providers/           base.py (interface), foundry.py (cloud), local.py (Foundry Local, Ollama)
+  providers/           base.py (interface), foundry.py (cloud), local.py (Phi on Foundry Local)
   router.py            hybrid routing rules + fallback
   privacy.py           Kenyan PII detection and redaction
   rag.py               offline BM25 retrieval + RAG prompt
@@ -176,7 +175,7 @@ tests/                 pytest suite (no network needed)
 | `foundry` is not recognized | Open a new terminal after installing Foundry Local - see [Lab 00, Step 2](labs/00-setup.md#step-2---install-and-start-the-local-model) |
 | Local model not available | Run `foundry server start`, then `foundry model load phi-3.5-mini`, and check with `foundry server status` |
 | First local answer is very slow | Phi is loading into memory; later calls are faster |
-| Laptop runs out of memory | Close other apps, or use the optional Ollama runtime with `qwen2.5:0.5b` (Lab 00, Step 2) |
+| Laptop runs out of memory | Phi needs ~4 GB free RAM - close other apps, then `foundry model load phi-3.5-mini` again |
 | `ModuleNotFoundError: pycord` | Activate the virtual environment and run `pip install -r requirements.txt` |
 
 ## Notes for facilitators
