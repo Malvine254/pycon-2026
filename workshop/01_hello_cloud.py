@@ -1,7 +1,7 @@
 # %% [markdown]
 # # Module 1 - Hello, cloud (Microsoft Foundry)
 # Call a model deployed in Microsoft Foundry with the `openai` SDK.
-# Auth: Entra ID via `az login` (recommended) or `FOUNDRY_API_KEY` in `.env`.
+# Auth: the `FOUNDRY_API_KEY` from the facilitators in `.env` (own Azure account: Entra ID via `az login`).
 
 # %%
 from pycord.config import Settings

@@ -40,32 +40,16 @@ flowchart LR
 Each module is a Python file split into cells with `# %%`. In VS Code, click **Run Cell** above each cell
 (needs the Python and Jupyter extensions), or run the whole file with `python workshop/<file>.py` after activating `.venv`.
 
-## 1. Prerequisites (do this before the workshop)
+## 1. Prerequisites
 
 - Python 3.10 or newer, Git, VS Code with the Python and Jupyter extensions
 - A laptop with at least 8 GB RAM
-- An Azure account (free trial works) for the cloud modules
-- A local model runtime - **one** of:
-  - **Foundry Local** (Windows / macOS) - recommended
-    - Windows: `winget install Microsoft.FoundryLocal`
-    - macOS: `brew tap microsoft/foundrylocal` then `brew install foundrylocal`
-  - **Ollama** (Windows / macOS / Linux) - from ollama.com
+- **Microsoft Foundry access** - the facilitators give every attendee the Foundry login details (endpoint and key) at the workshop
+- **Foundry Local with Phi** for the local model - install it before the workshop by following
+  **[Lab 00, Step 2](labs/00-setup.md#step-2---install-and-start-the-local-model)** (the ~2.2 GB download is best done at home)
 
-Download the local model **at home**, not on the conference Wi-Fi. Foundry Local has a new CLI (`foundry server`)
-and a legacy CLI (`foundry service`) - run `foundry --help` to see which you have:
-
-| Step | New CLI | Legacy CLI |
-|---|---|---|
-| Start the service | `foundry server start` | `foundry service start` |
-| Download Phi (~2.2 GB, once) | `foundry model download phi-3.5-mini` | `foundry model download phi-3.5-mini` |
-| Load Phi | `foundry model load phi-3.5-mini` | Not needed - the code loads it |
-| Find the port | `foundry server status` → `Web URLs` | `foundry service status` → `running on http://127.0.0.1:<port>` |
-| Check Phi is loaded | `(Invoke-RestMethod "http://127.0.0.1:<port>/v1/models").data.id` | same |
-
-Full step-by-step guide with troubleshooting: [Lab 00, Step 2](labs/00-setup.md#step-2---install-and-start-the-local-model).
-The local model is optional: without it, the labs and the app fall back to the cloud model.
-
-Optional Ollama path: `ollama pull qwen2.5:1.5b`, then set `LOCAL_RUNTIME=ollama` (always port 11434).
+> [!NOTE]
+> The local model is optional on the day. Without it, the labs and the app fall back to the cloud model and tell you how to install Phi.
 
 ## 2. Get the project and install it
 
@@ -93,9 +77,9 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-## 3. Set up Microsoft Foundry (cloud)
+## 3. Add your Microsoft Foundry details
 
-For the workshop, the facilitator provides the Azure OpenAI endpoint, API key, deployment name, and API version. Copy those values into `.env`:
+Use the Foundry login details from the facilitators. Copy them into `.env`:
 
 ```ini
 FOUNDRY_ENDPOINT=https://<provided-resource>.openai.azure.com
@@ -104,20 +88,19 @@ FOUNDRY_DEPLOYMENT=gpt-5-mini
 FOUNDRY_API_VERSION=2025-08-07
 ```
 
-Never commit `.env` or share the key in chat. The facilitator should rotate the shared key after the workshop.
-
-Creating an Azure resource or deploying a model is **optional** for facilitators and personal Azure accounts. If you use your own Azure account, sign in - pick one:
-   - **Recommended:** install the Azure CLI, run `az login`, and make sure your account has the
-     **Cognitive Services OpenAI User** role on the Foundry resource. Leave `FOUNDRY_API_KEY` empty.
+Never commit `.env` or share the key in chat - `.env` is git-ignored.
 
 ## 4. Configure the local model
 
-In `.env`:
+The defaults in `.env` already match the workshop:
 
-| Runtime | Settings |
-|---|---|
-| Foundry Local | `LOCAL_RUNTIME=foundry-local`, `LOCAL_MODEL=phi-3.5-mini` |
-| Ollama | `LOCAL_RUNTIME=ollama`, `OLLAMA_MODEL=qwen2.5:1.5b` |
+```ini
+LOCAL_RUNTIME=foundry-local
+LOCAL_MODEL=phi-3.5-mini
+```
+
+Installing Foundry Local, starting the server, loading Phi and checking its port are covered step by step in
+**[Lab 00, Step 2](labs/00-setup.md#step-2---install-and-start-the-local-model)**.
 
 ## 5. Check everything works
 
@@ -126,21 +109,19 @@ python workshop/00_setup_check.py
 pytest
 ```
 
-All lines should show `[OK]`. If the cloud check fails you can still do modules 2, 5 and 6 offline.
+All lines should show `[OK]`. `[!!] Local runtime` is fine for now - the labs fall back to the cloud model.
 
 ## 6. Run the apps
 
-**Mela agent web app** (chat with the tool-calling agent):
+**Mela agent web app** (chat with the tool-calling agent), from an activated PowerShell terminal:
 
 ```powershell
 .\scripts\start_app.ps1
 ```
 
-For a local-only demo, run this from an activated PowerShell terminal:
-
-```powershell
-.\scripts\start_app.ps1
-```
+The script starts Foundry Local and loads Phi when they are installed, then starts the web app.
+If Foundry Local is missing, it prints a warning and runs Mela with the cloud model only.
+On macOS / Linux, start Foundry Local yourself and run `python app/server.py`.
 
 Open http://127.0.0.1:8000. The UI is in **Kiswahili by default** - switch with **SW / EN** in the top bar; Mela also
 replies in the chosen language. Choose **Auto**, **Local** or **Cloud** in the sidebar. Each answer shows the tools
@@ -173,10 +154,14 @@ src/pycord/
   privacy.py           Kenyan PII detection and redaction
   rag.py               offline BM25 retrieval + RAG prompt
   agent.py             tool-calling agent
+  documents.py         text extraction for uploads (PDF, MD, TXT, CSV)
+  storage.py           local storage for uploads, chats and instructions (.mela/)
+  labkit.py            lab helper: local model with cloud fallback
 labs/                  step-by-step lab guides (start here)
-workshop/              modules 00-07
-app/server.py          agent web app (FastAPI + app/static/)
+workshop/              lab code, modules 00-07
+app/server.py          Mela web app (FastAPI + app/static/)
 app/streamlit_app.py   Streamlit chat UI
+scripts/start_app.ps1  starts Foundry Local + Phi (if installed) and the web app
 data/docs/             sample knowledge base (add your own .md files)
 tests/                 pytest suite (no network needed)
 ```
@@ -185,18 +170,18 @@ tests/                 pytest suite (no network needed)
 
 | Problem | Fix |
 |---|---|
-| `FOUNDRY_ENDPOINT is not set` | Copy `.env.example` to `.env` and fill it in |
-| `401` / `PermissionDenied` from Foundry | Run `az login` again or check the role assignment; or use `FOUNDRY_API_KEY` |
-| `DeploymentNotFound` | `FOUNDRY_DEPLOYMENT` must match the deployment name in the portal |
-| Local runtime not found | Check `foundry --version` / `ollama --version`, then open a new terminal |
-| First local answer is very slow | The model is loading into memory; later calls are faster |
-| Laptop runs out of memory | Close other apps or use the optional Ollama runtime with `qwen2.5:0.5b` |
-| `ModuleNotFoundError: pycord` | Activate the virtual environment and run `pip install -e .` |
+| `FOUNDRY_ENDPOINT is not set` | Copy `.env.example` to `.env` and fill in the facilitator-provided details |
+| `401` / `PermissionDenied` from Foundry | Check `FOUNDRY_API_KEY` matches the key you were given |
+| `DeploymentNotFound` | `FOUNDRY_DEPLOYMENT` must match the deployment name you were given |
+| `foundry` is not recognized | Open a new terminal after installing Foundry Local - see [Lab 00, Step 2](labs/00-setup.md#step-2---install-and-start-the-local-model) |
+| Local model not available | Run `foundry server start`, then `foundry model load phi-3.5-mini`, and check with `foundry server status` |
+| First local answer is very slow | Phi is loading into memory; later calls are faster |
+| Laptop runs out of memory | Close other apps, or use the optional Ollama runtime with `qwen2.5:0.5b` (Lab 00, Step 2) |
+| `ModuleNotFoundError: pycord` | Activate the virtual environment and run `pip install -r requirements.txt` |
 
 ## Notes for facilitators
 
 - Bring USB drives with Python wheels (`pip download -d wheels ".[ui,web,dev]"`) and the model files,
   so attendees can install with `pip install --no-index --find-links wheels -e ".[ui,web,dev]"`.
-- A shared Foundry endpoint and key for the room can be handed out instead of personal Azure accounts.
-  Rotate the key after the workshop.
+- Hand out the Foundry login details (endpoint and key) to attendees privately, and rotate the key after the workshop.
 - The documents in `data/docs` are sample data for the workshop, not official advice.

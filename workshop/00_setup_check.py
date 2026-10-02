@@ -23,7 +23,7 @@ check("FOUNDRY_ENDPOINT set", bool(settings.foundry_endpoint), "Set FOUNDRY_ENDP
 check(
     "Cloud auth configured",
     bool(settings.foundry_api_key) or shutil.which("az") is not None,
-    "Install Azure CLI and run `az login`, or set FOUNDRY_API_KEY",
+    "Set FOUNDRY_API_KEY to the key from the facilitators (own Azure account: run `az login`)",
 )
 check("Cloud reachable", get_cloud_provider(settings).is_available(), "Offline? Modules 2, 5 and 6 still work")
 

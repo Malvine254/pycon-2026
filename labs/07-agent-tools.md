@@ -16,9 +16,10 @@ This lab uses the facilitator-provided cloud settings because reliable tool call
 
 If you also want to run the local text-only comparison, make sure Phi is running ([how](00-setup.md#step-2---install-and-start-the-local-model)):
 
-| New CLI | Legacy CLI |
-|---|---|
-| `foundry server start` then `foundry model load phi-3.5-mini` | `foundry service start` (the lab loads Phi) |
+```powershell
+foundry server start
+foundry model load phi-3.5-mini
+```
 
 Local Phi can answer text questions, but this project intentionally routes tool-heavy requests to the cloud path.
 

@@ -3,8 +3,7 @@
 # The same OpenAI-style API, but the model runs on your laptop: no internet, no cost per request.
 #
 # Before this module, in a terminal:
-# - Foundry Local, new CLI:    `foundry server start`, then `foundry model load phi-3.5-mini`
-# - Foundry Local, legacy CLI: `foundry service start` (this lab loads Phi for you)
+# - Foundry Local: `foundry server start`, then `foundry model load phi-3.5-mini`
 # - Full steps and port checks: labs/00-setup.md, Step 2
 # - Ollama: `ollama pull qwen2.5:1.5b` and set `LOCAL_RUNTIME=ollama` in `.env`
 #

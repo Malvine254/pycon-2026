@@ -19,14 +19,13 @@ Run the **same prompt** as Lab 01 on a model that lives on your laptop - no inte
 
 If you completed [Lab 00, Step 2](00-setup.md#step-2---install-and-start-the-local-model), you are ready. Quick reminder:
 
-| | New CLI (`foundry server`) | Legacy CLI (`foundry service`) |
-|---|---|---|
-| Start | `foundry server start` | `foundry service start` |
-| Load Phi | `foundry model load phi-3.5-mini` | Not needed - the lab loads it |
-| Find the port | `foundry server status` → `Web URLs` | `foundry service status` → `running on http://127.0.0.1:<port>` |
-| Check Phi is loaded | `(Invoke-RestMethod "http://127.0.0.1:<port>/v1/models").data.id` | same |
+```powershell
+foundry server start
+foundry model load phi-3.5-mini
+foundry server status        # shows Ready and the port (Web URLs)
+```
 
-Keep the service running while you complete this lab.
+Keep the server running while you complete this lab.
 
 In `.env`:
 
@@ -135,7 +134,7 @@ To switch Foundry Local models:
 
 	```powershell
 	foundry model download phi-3.5-mini
-	foundry model load phi-3.5-mini   # new CLI only; the legacy CLI loads it for you
+	foundry model load phi-3.5-mini
 	```
 
 4. Restart the Python cell or the app. The provider checks that the selected alias is actually loaded; if it is missing, the lab skips the local provider instead of crashing.
@@ -148,7 +147,6 @@ To switch Foundry Local models:
 |---|---|
 | `Using: foundry (local: False)` | The local model is missing - the lab used the cloud instead. Install Foundry Local / Ollama, then open a **new** terminal / restart VS Code |
 | Very slow or laptop freezes | Close other apps, or use a smaller model (Exercise 2) |
-| `ModuleNotFoundError: foundry_local` | Run `pip install -e .` - the project pins a compatible `foundry-local-sdk` |
 | Ollama `connection refused` | Start the Ollama app, or run `ollama serve` |
 
 ---

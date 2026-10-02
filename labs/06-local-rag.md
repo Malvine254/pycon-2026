@@ -14,9 +14,10 @@ Make the model answer from **your documents** instead of its memory, with citati
 
 In a terminal with `(.venv)` active, make sure Phi is running ([how](00-setup.md#step-2---install-and-start-the-local-model)):
 
-| New CLI | Legacy CLI |
-|---|---|
-| `foundry server start` then `foundry model load phi-3.5-mini` | `foundry service start` (the lab loads Phi) |
+```powershell
+foundry server start
+foundry model load phi-3.5-mini
+```
 
 No Phi yet? Search still works offline, and the answers come from the cloud model instead.
 

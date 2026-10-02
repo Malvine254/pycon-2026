@@ -19,8 +19,9 @@ $env:LOCAL_MODEL = "phi-3.5-mini"
 
 # The local model is optional: without it Mela runs cloud-only.
 if (Get-Command foundry -ErrorAction SilentlyContinue) {
-    $isNewCli = (foundry --help 2>&1 | Out-String) -match '\bserver\b'
-    if ($isNewCli) {
+    if ((foundry --help 2>&1 | Out-String) -notmatch '\bserver\b') {
+        Write-Warning "This Foundry Local version is too old (no 'foundry server' command). Update it: winget upgrade Microsoft.FoundryLocal. Continuing with the cloud model only."
+    } else {
         foundry server start
         if ($LASTEXITCODE -eq 0) {
             foundry model load $env:LOCAL_MODEL
@@ -29,11 +30,6 @@ if (Get-Command foundry -ErrorAction SilentlyContinue) {
         } else {
             Write-Warning "Foundry Local server could not start. Continuing with the cloud model only."
         }
-    } else {
-        # Legacy CLI: the app loads the model itself through the Foundry Local SDK.
-        foundry service start
-        if ($LASTEXITCODE -ne 0) { Write-Warning "Foundry Local service could not start. Continuing with the cloud model only." }
-        foundry service status
     }
 } else {
     Write-Warning "Foundry Local is not installed ('foundry' not found). Starting Mela with the cloud model only."

@@ -32,17 +32,10 @@ class FoundryLocalProvider(Provider):
                 timeout=10,
             ).stdout
         except (OSError, subprocess.SubprocessError) as exc:
-            try:
-                from foundry_local import FoundryLocalManager
-
-                manager = FoundryLocalManager(self.alias)
-                self.model = manager.get_model_info(self.alias).id
-                return OpenAI(base_url=manager.endpoint, api_key=manager.api_key)
-            except Exception as legacy_exc:
-                raise RuntimeError(
-                    "Foundry Local is not running. Use `foundry server start` on the new CLI "
-                    "or `foundry model run phi-3.5-mini` on the legacy CLI."
-                ) from legacy_exc
+            raise RuntimeError(
+                f"Foundry Local is not running. Run `foundry server start`, then `foundry model load {self.alias}` "
+                "(see labs/00-setup.md, Step 2)."
+            ) from exc
 
         match = re.search(r"Web URLs\s+(https?://\S+)", status)
         if not match:
@@ -52,7 +45,7 @@ class FoundryLocalProvider(Provider):
         models = list(client.models.list().data)
         model = next((item for item in models if self.alias.lower() in item.id.lower()), None)
         if model is None:
-            raise RuntimeError(f"Foundry Local model '{self.alias}' is not loaded.")
+            raise RuntimeError(f"Foundry Local model '{self.alias}' is not loaded. Run `foundry model load {self.alias}`.")
         self.model = model.id
         return client
 
@@ -74,17 +67,7 @@ class FoundryLocalProvider(Provider):
                 models = json.loads(response.read()).get("data", [])
             return any(self.alias.lower() in str(model.get("id", "")).lower() for model in models)
         except (OSError, ValueError, json.JSONDecodeError, subprocess.SubprocessError):
-            try:
-                legacy = subprocess.run(
-                    ["foundry", "service", "status"],
-                    capture_output=True,
-                    check=False,
-                    text=True,
-                    timeout=5,
-                )
-                return legacy.returncode == 0
-            except (OSError, subprocess.SubprocessError):
-                return False
+            return False
 
 
 class OllamaProvider(Provider):

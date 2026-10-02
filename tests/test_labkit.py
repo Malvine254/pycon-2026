@@ -25,7 +25,7 @@ def test_prefers_local(monkeypatch):
 def test_falls_back_to_cloud_with_hint(monkeypatch, capsys):
     patch(monkeypatch, False, True)
     assert labkit.local_or_cloud(object()).name == "cloud"
-    assert "foundry model run phi-3.5-mini" in capsys.readouterr().out
+    assert "foundry model load phi-3.5-mini" in capsys.readouterr().out
 
 
 def test_no_model_gives_clear_error(monkeypatch):

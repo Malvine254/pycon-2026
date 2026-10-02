@@ -6,10 +6,11 @@ from .providers import Provider, get_cloud_provider, get_local_provider
 
 LOCAL_SETUP_HINT = """\
 [!!] Local model not available - the local parts of this lab will be skipped or use the cloud.
-     To install one (see labs/00-setup.md):
-       Foundry Local:  winget install Microsoft.FoundryLocal   (macOS: brew install foundrylocal)
-                       foundry model run phi-3.5-mini
-       Ollama:         ollama pull qwen2.5:1.5b   and set LOCAL_RUNTIME=ollama in .env"""
+     To install it, follow labs/00-setup.md, Step 2. In short:
+       Windows:  winget install Microsoft.FoundryLocal     macOS:  brew install foundrylocal
+       Then:     foundry server start
+                 foundry model download phi-3.5-mini
+                 foundry model load phi-3.5-mini"""
 
 
 def local_or_cloud(settings: Settings | None = None) -> Provider:
